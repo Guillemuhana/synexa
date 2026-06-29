@@ -906,115 +906,128 @@ function HeroMockup() {
   );
 }
 
-// ---- Canvas tipo n8n animado: entradas + agente + nodos de razonamiento IA ----
+// ---- Canvas tipo n8n: Trigger -> AI Agent (Chat Model OpenAI + Memory + Tools) -> salidas ----
 function FlowDiagram() {
   const O = "#d97757";
-  const nodeFill = "#2a2724";
-  const stroke = "rgba(217,119,87,.55)";
+  const nodeFill = "#211e1b";
+  const stroke = "rgba(217,119,87,.5)";
+  const muted = "#8a847b";
+  const F = "Inter, sans-serif";
 
-  // Nodos de entrada (izquierda), agente (centro), salidas (derecha)
-  const nodes = [
-    { x: 6,   y: 150, w: 100, h: 38, label: "WhatsApp", icon: "💬" },
-    { x: 6,   y: 210, w: 100, h: 38, label: "Webhook",  icon: "⚡" },
-    { x: 6,   y: 270, w: 100, h: 38, label: "Base datos", icon: "🗄" },
-    { x: 148, y: 205, w: 96,  h: 44, label: "Agente IA", icon: "✦", hot: true },
-    { x: 290, y: 150, w: 92,  h: 36, label: "Responder", icon: "↩" },
-    { x: 290, y: 270, w: 92,  h: 36, label: "CRM", icon: "▤" },
+  // Flujo principal (izquierda -> derecha)
+  const flow = [
+    { x: 8,   y: 92,  w: 108, h: 46, label: "WhatsApp",  sub: "Trigger",     icon: "💬", accent: "#25d366" },
+    { x: 176, y: 78,  w: 132, h: 74, label: "AI Agent",  sub: "Tools Agent", icon: "✦", accent: O, hot: true },
+    { x: 360, y: 64,  w: 80,  h: 42, label: "Responder", sub: "WhatsApp",    icon: "↩", accent: "#25d366" },
+    { x: 360, y: 124, w: 80,  h: 42, label: "CRM",       sub: "Supabase",    icon: "▤", accent: "#3ecf8e" },
   ];
 
-  // Nodos de razonamiento IA (arriba, "el cerebro" del agente)
-  const brain = [
-    { x: 30,  y: 30, w: 92, h: 34, label: "OpenAI",     icon: "✦" },
-    { x: 150, y: 30, w: 92, h: 34, label: "Memoria",    icon: "◈" },
-    { x: 270, y: 30, w: 92, h: 34, label: "Calendario", icon: "▦" },
+  // Sub-nodos que cuelgan del AI Agent (puertos reales de n8n)
+  const sub = [
+    { x: 64,  y: 250, w: 120, h: 50, role: "Chat Model", label: "OpenAI",   sub: "gpt-4o",   icon: "✶", accent: "#10a37f", port: 214 },
+    { x: 198, y: 262, w: 112, h: 50, role: "Memory",     label: "Memoria",  sub: "Postgres", icon: "◈", accent: "#8b6fd6", port: 242 },
+    { x: 324, y: 250, w: 120, h: 50, role: "Tool",       label: "Calendar", sub: "Google",   icon: "▦", accent: "#4a90d9", port: 270 },
   ];
 
-  // Conexiones de flujo principal
+  // Enlaces del flujo principal (centro vertical del AI Agent: y=115)
   const links = [
-    "M 106 169 C 130 169, 128 227, 148 227",
-    "M 106 229 C 128 229, 128 227, 148 227",
-    "M 106 289 C 130 289, 128 227, 148 227",
-    "M 244 227 C 268 227, 268 168, 290 168",
-    "M 244 227 C 268 227, 268 288, 290 288",
+    "M 116 115 C 150 115, 150 115, 176 115",          // WhatsApp -> Agent
+    "M 308 115 C 336 115, 336 85,  360 85",           // Agent -> Responder
+    "M 308 115 C 336 115, 336 145, 360 145",          // Agent -> CRM
   ];
 
-  // Conexiones del agente hacia su "cerebro" (líneas punteadas hacia arriba)
-  const brainLinks = [
-    "M 196 205 C 196 140, 76 110, 76 64",
-    "M 196 205 C 196 130, 196 110, 196 64",
-    "M 196 205 C 196 140, 316 110, 316 64",
+  // Enlaces punteados del Agent hacia sus puertos inferiores (model / memory / tool)
+  const subLinks = [
+    "M 214 152 C 214 210, 124 215, 124 250",          // -> OpenAI (Chat Model)
+    "M 242 152 C 242 220, 254 230, 254 262",          // -> Memoria
+    "M 270 152 C 270 210, 384 215, 384 250",          // -> Calendar (Tool)
   ];
 
   return (
-    <svg viewBox="0 0 388 320" style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }}>
+    <svg viewBox="0 0 452 318" style={{ width: "100%", maxWidth: 480, display: "block", margin: "0 auto" }}>
       <defs>
         <radialGradient id="agentGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor={O} stopOpacity="0.55" />
+          <stop offset="0%" stopColor={O} stopOpacity="0.5" />
           <stop offset="100%" stopColor={O} stopOpacity="0" />
         </radialGradient>
       </defs>
 
       {/* grilla de fondo */}
-      <g fill="rgba(255,255,255,.06)">
+      <g fill="rgba(255,255,255,.05)">
         {Array.from({ length: 9 }).map((_, r) =>
-          Array.from({ length: 11 }).map((__, c) => (
+          Array.from({ length: 13 }).map((__, c) => (
             <circle key={`${r}-${c}`} cx={12 + c * 36} cy={14 + r * 36} r="1" />
           ))
         )}
       </g>
 
-      {/* conexiones al cerebro (punteadas, sutiles) */}
+      {/* conexiones a los sub-nodos (punteadas) */}
       <g fill="none" stroke={stroke} strokeWidth="1.2" strokeDasharray="3 4">
-        {brainLinks.map((d, i) => <path key={`b-${i}`} d={d} />)}
+        {subLinks.map((d, i) => <path key={`s-${i}`} d={d} />)}
       </g>
-      {/* pulso subiendo hacia el cerebro */}
       <g fill="none" strokeWidth="2">
-        {brainLinks.map((d, i) => (
-          <path key={`bf-${i}`} d={d} stroke={O} strokeDasharray="4 60"
-            style={{ animation: `flow 2s linear infinite`, animationDelay: `${i * 0.35}s` }} />
+        {subLinks.map((d, i) => (
+          <path key={`sf-${i}`} d={d} stroke={O} strokeDasharray="4 70"
+            style={{ animation: `flow 2.2s linear infinite`, animationDelay: `${i * 0.3}s` }} />
         ))}
       </g>
 
-      {/* líneas de flujo principal */}
+      {/* líneas del flujo principal */}
       <g fill="none" strokeWidth="1.6">
         {links.map((d, i) => <path key={`base-${i}`} d={d} stroke={stroke} />)}
         {links.map((d, i) => (
-          <path key={`flow-${i}`} d={d} stroke={O} strokeWidth="2.4" strokeDasharray="5 90"
-            style={{ animation: `flow 1.6s linear infinite`, animationDelay: `${i * 0.25}s` }} />
+          <path key={`flow-${i}`} d={d} stroke={O} strokeWidth="2.4" strokeDasharray="5 95"
+            style={{ animation: `flow 1.7s linear infinite`, animationDelay: `${i * 0.25}s` }} />
         ))}
       </g>
 
-      {/* nodos de razonamiento (cerebro) */}
-      {brain.map((n, i) => (
-        <g key={`brain-${i}`} style={{ animation: "float 4s ease-in-out infinite", animationDelay: `${i * 0.4}s` }}>
-          <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="9"
-            fill="#211e1b" stroke={stroke} strokeWidth="1.2" />
-          <text x={n.x + 15} y={n.y + n.h / 2 + 4} fontSize="12" textAnchor="middle" fill={O}>{n.icon}</text>
-          <text x={n.x + 28} y={n.y + n.h / 2 + 4} fontSize="11" fill="#e8e3da" fontFamily="Inter, sans-serif" fontWeight="600">{n.label}</text>
+      {/* etiquetas de puerto del AI Agent (estilo n8n) */}
+      {sub.map((n, i) => (
+        <g key={`port-${i}`}>
+          <rect x={n.port - 4} y={150} width="8" height="8" rx="2" fill="#2a2724" stroke={stroke} strokeWidth="1" />
         </g>
       ))}
 
-      {/* nodos de flujo */}
-      {nodes.map((n, i) => (
-        <g key={i}>
+      {/* sub-nodos: modelo, memoria, herramienta */}
+      {sub.map((n, i) => (
+        <g key={`sub-${i}`} style={{ animation: "float 4.5s ease-in-out infinite", animationDelay: `${i * 0.45}s` }}>
+          <text x={n.x + n.w / 2} y={n.y - 8} fontSize="8.5" textAnchor="middle"
+            fill={muted} fontFamily={F} fontWeight="700" letterSpacing="0.6">{n.role.toUpperCase()}</text>
+          <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="11" fill={nodeFill} stroke={stroke} strokeWidth="1.2" />
+          <rect x={n.x + 4} y={n.y + 9} width="3.5" height={n.h - 18} rx="1.75" fill={n.accent} />
+          <text x={n.x + 22} y={n.y + n.h / 2 + 1} fontSize="15" textAnchor="middle" fill={n.accent}>{n.icon}</text>
+          <text x={n.x + 36} y={n.y + n.h / 2 - 3} fontSize="12.5" fill="#efeae1" fontFamily={F} fontWeight="700">{n.label}</text>
+          <text x={n.x + 36} y={n.y + n.h / 2 + 12} fontSize="9.5" fill={muted} fontFamily={F} fontWeight="500">{n.sub}</text>
+        </g>
+      ))}
+
+      {/* nodos del flujo principal */}
+      {flow.map((n, i) => (
+        <g key={`flow-n-${i}`}>
           {n.hot && (
-            <circle cx={n.x + n.w / 2} cy={n.y + n.h / 2} r="48" fill="url(#agentGlow)"
-              style={{ animation: "pulse 2s ease-in-out infinite" }} />
+            <circle cx={n.x + n.w / 2} cy={n.y + n.h / 2} r="56" fill="url(#agentGlow)"
+              style={{ animation: "pulse 2.4s ease-in-out infinite" }} />
           )}
-          <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="10"
-            fill={n.hot ? O : nodeFill} stroke={n.hot ? "#f0b59e" : stroke} strokeWidth="1.4" />
-          <text x={n.x + 16} y={n.y + n.h / 2 + 4} fontSize="13" textAnchor="middle">{n.icon}</text>
-          <text x={n.x + 30} y={n.y + n.h / 2 + 4} fontSize="11.5" fill="#fff" fontFamily="Inter, sans-serif" fontWeight="600">{n.label}</text>
+          <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="12"
+            fill={n.hot ? O : nodeFill} stroke={n.hot ? "#f3bda6" : stroke} strokeWidth="1.4" />
+          {!n.hot && <rect x={n.x + 4} y={n.y + 9} width="3.5" height={n.h - 18} rx="1.75" fill={n.accent} />}
+          <text x={n.x + 22} y={n.y + (n.hot ? 30 : n.h / 2 - 3)} fontSize={n.hot ? "17" : "14"}
+            textAnchor="middle" fill={n.hot ? "#fff" : n.accent}>{n.icon}</text>
+          <text x={n.x + 38} y={n.y + (n.hot ? 28 : n.h / 2 - 2)} fontSize={n.hot ? "14" : "12.5"}
+            fill="#fff" fontFamily={F} fontWeight="700">{n.label}</text>
+          <text x={n.x + 38} y={n.y + (n.hot ? 44 : n.h / 2 + 12)} fontSize="9.5"
+            fill={n.hot ? "rgba(255,255,255,.85)" : muted} fontFamily={F} fontWeight="500">{n.sub}</text>
+          {/* dots "pensando" dentro del AI Agent */}
+          {n.hot && (
+            <g fill="#fff">
+              {[0, 1, 2].map((d) => (
+                <circle key={d} cx={n.x + 30 + d * 9} cy={n.y + n.h - 13} r="2.4"
+                  style={{ animation: "pulse 1.2s ease-in-out infinite", animationDelay: `${d * 0.2}s` }} />
+              ))}
+            </g>
+          )}
         </g>
       ))}
-
-      {/* dots "pensando" dentro del nodo agente */}
-      <g fill="#fff">
-        {[0, 1, 2].map((d) => (
-          <circle key={d} cx={187 + d * 9} cy={240} r="2.2"
-            style={{ animation: "pulse 1.2s ease-in-out infinite", animationDelay: `${d * 0.2}s` }} />
-        ))}
-      </g>
     </svg>
   );
 }
