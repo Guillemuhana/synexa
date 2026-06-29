@@ -1567,7 +1567,7 @@ function ChatDemo() {
 
 // ---- Burbuja de chat flotante: asistente de ventas IA (Groq vía /api/chat) ----
 const FLOAT_SEED = [
-  { role: "assistant", content: `¡Hola! 👋 Soy Nexa, la asistente de ventas de ${BRAND}. Te ayudo con agentes de IA y software a medida, y coordinamos una llamada si querés. ¿Qué hace tu negocio?` },
+  { role: "assistant", content: `¡Hola! 👋 Soy el asistente de ventas de ${BRAND}. Te ayudo con agentes de IA y software a medida, y coordinamos una llamada si querés. ¿Qué hace tu negocio?` },
 ];
 
 function FloatingChat() {
@@ -1661,7 +1661,7 @@ function FloatingChat() {
           <div style={{ background: "#0f1218", padding: "13px 16px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid #23262e" }}>
             <div style={{ width: 36, height: 36, borderRadius: 99, background: O, display: "grid", placeItems: "center", color: "#fff", fontWeight: 700 }}>✦</div>
             <div style={{ lineHeight: 1.2 }}>
-              <div style={{ fontSize: 14.5, fontWeight: 700, color: "#f4f5f7" }}>Nexa · {L("Sales assistant", "Asistente de ventas")}</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: "#f4f5f7" }}>{L("Sales assistant", "Asistente de ventas")} · {BRAND}</div>
               <div style={{ fontSize: 11, color: "#22a06b", display: "flex", alignItems: "center", gap: 5 }}>
                 <span style={{ width: 6, height: 6, borderRadius: 99, background: "#22a06b" }} /> en línea · responde al instante
               </div>
