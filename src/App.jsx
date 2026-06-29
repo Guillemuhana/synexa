@@ -926,15 +926,45 @@ export default function App() {
             </p>
           </Reveal>
           <Reveal delay={0.12}>
-            <button
-              onClick={() => window.dispatchEvent(new Event("open-nexa-chat"))}
-              className="btn-primary" style={{
-                display: "inline-block", background: C.orange, color: C.white, border: "none",
-                padding: "17px 40px", borderRadius: 12, fontWeight: 600, fontSize: 17, cursor: "pointer",
-                fontFamily: "inherit", transition: "background .2s, transform .2s",
+            <div style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center" }}>
+              <a href="#agenda" className="btn-primary" style={{
+                display: "inline-block", background: C.orange, color: C.white,
+                padding: "17px 40px", borderRadius: 12, fontWeight: 600, fontSize: 17,
+                transition: "background .2s, transform .2s",
               }}>
-              Hablá con nuestra asistente IA
-            </button>
+                Agendá tu reunión
+              </a>
+              <button
+                onClick={() => window.dispatchEvent(new Event("open-nexa-chat"))}
+                className="btn-ghost" style={{
+                  display: "inline-block", background: C.white, color: C.inkSoft,
+                  border: `1.5px solid ${C.line}`,
+                  padding: "17px 40px", borderRadius: 12, fontWeight: 600, fontSize: 17, cursor: "pointer",
+                  fontFamily: "inherit", transition: "border-color .2s, color .2s",
+                }}>
+                Hablá con la asistente IA
+              </button>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ===== AGENDA / SISTEMA DE CITAS ===== */}
+      <section id="agenda" className="pad" style={{ padding: "20px 40px 110px" }}>
+        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
+          <Reveal>
+            <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 38, fontWeight: 600, letterSpacing: -0.7, marginBottom: 12, textAlign: "center" }}>
+              Agendá tu llamada o reunión
+            </h2>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6, marginBottom: 40, textAlign: "center", maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
+              Elegí el día y horario que mejor te quede. Coordinamos una reunión corta para
+              entender tu caso y mostrarte cómo te podemos ayudar.
+            </p>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <BookingCalendar />
           </Reveal>
         </div>
       </section>
@@ -1567,5 +1597,216 @@ function FloatingChat() {
         )}
       </button>
     </>
+  );
+}
+
+// ---- Sistema de citas: calendario + slots + formulario (guarda en Supabase) ----
+const DOW_LABELS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+const MONTHS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+const pad2 = (n) => String(n).padStart(2, "0");
+
+function BookingCalendar() {
+  const O = "#d97757";
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+
+  const [view, setView] = useState({ y: today.getFullYear(), m: today.getMonth() });
+  const [selDate, setSelDate] = useState(null);
+  const [slots, setSlots] = useState(null);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [slotsErr, setSlotsErr] = useState(false);
+  const [selTime, setSelTime] = useState(null);
+  const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", type: "Llamada", note: "" });
+  const [status, setStatus] = useState("idle"); // idle | submitting | done | error
+  const [errMsg, setErrMsg] = useState("");
+
+  const first = new Date(view.y, view.m, 1);
+  const startOffset = (first.getDay() + 6) % 7; // lunes primero
+  const daysInMonth = new Date(view.y, view.m + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < startOffset; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+  const canPrev = new Date(view.y, view.m, 1) > new Date(today.getFullYear(), today.getMonth(), 1);
+  const move = (delta) => { setView((v) => { const d = new Date(v.y, v.m + delta, 1); return { y: d.getFullYear(), m: d.getMonth() }; }); };
+
+  const dateStr = (d) => `${view.y}-${pad2(view.m + 1)}-${pad2(d)}`;
+  const isDisabled = (d) => {
+    const dt = new Date(view.y, view.m, d); dt.setHours(0, 0, 0, 0);
+    const dow = dt.getDay();
+    return dt < today || dow === 0 || dow === 6;
+  };
+
+  const pickDay = async (d) => {
+    const ds = dateStr(d);
+    setSelDate(ds); setSelTime(null); setStatus("idle"); setSlots(null);
+    setLoadingSlots(true); setSlotsErr(false);
+    try {
+      const r = await fetch(`/api/slots?date=${ds}`);
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "error");
+      // Si es hoy, ocultamos horarios ya pasados
+      const now = new Date();
+      const isToday = ds === `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+      let list = data.slots || [];
+      if (isToday) {
+        const hm = now.getHours() * 60 + now.getMinutes();
+        list = list.filter((t) => { const [h, m] = t.split(":").map(Number); return h * 60 + m > hm + 30; });
+      }
+      setSlots(list);
+    } catch (e) {
+      setSlotsErr(true);
+    } finally {
+      setLoadingSlots(false);
+    }
+  };
+
+  const valid = selDate && selTime && form.name.trim() && (form.email.trim() || form.phone.trim());
+
+  const submit = async () => {
+    if (!valid || status === "submitting") return;
+    setStatus("submitting"); setErrMsg("");
+    try {
+      const r = await fetch("/api/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: selDate, time: selTime, ...form }),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (r.ok) { setStatus("done"); return; }
+      setStatus("error");
+      setErrMsg(data.error || "No se pudo agendar. Probá de nuevo.");
+      if (r.status === 409) { setSelTime(null); pickDay(Number(selDate.slice(8, 10))); }
+    } catch (e) {
+      setStatus("error"); setErrMsg("Hubo un problema de conexión. Probá de nuevo.");
+    }
+  };
+
+  const fld = (k, ph, type = "text") => (
+    <input
+      value={form[k]} onChange={(e) => setForm((f) => ({ ...f, [k]: e.target.value }))}
+      placeholder={ph} type={type}
+      style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "11px 14px", fontSize: 14.5, outline: "none", fontFamily: "inherit", background: C.white }}
+    />
+  );
+
+  if (status === "done") {
+    const [yy, mm, dd] = selDate.split("-");
+    return (
+      <div style={{ background: C.white, border: `1px solid ${C.line}`, borderRadius: 20, padding: "48px 36px", textAlign: "center", maxWidth: 560, margin: "0 auto" }}>
+        <div style={{ width: 60, height: 60, borderRadius: 99, background: `${O}1c`, color: O, display: "grid", placeItems: "center", fontSize: 30, margin: "0 auto 18px" }}>✓</div>
+        <h3 style={{ fontFamily: "'Lora', serif", fontSize: 26, fontWeight: 600, marginBottom: 10 }}>¡Reunión agendada!</h3>
+        <p style={{ fontSize: 16, color: C.muted, lineHeight: 1.6 }}>
+          Te esperamos el <b style={{ color: C.ink }}>{dd}/{mm}/{yy} a las {selTime} hs</b> ({form.type}).<br />
+          Te vamos a contactar a {form.email || form.phone} para confirmar los detalles.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "start", maxWidth: 860, margin: "0 auto" }}>
+      {/* Calendario */}
+      <div style={{ background: C.white, border: `1px solid ${C.line}`, borderRadius: 18, padding: 22 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <button onClick={() => canPrev && move(-1)} disabled={!canPrev} aria-label="Mes anterior"
+            style={{ width: 34, height: 34, borderRadius: 9, border: `1px solid ${C.line}`, background: C.white, cursor: canPrev ? "pointer" : "default", opacity: canPrev ? 1 : 0.4, fontSize: 16 }}>‹</button>
+          <div style={{ fontWeight: 700, fontSize: 15.5 }}>{MONTHS[view.m]} {view.y}</div>
+          <button onClick={() => move(1)} aria-label="Mes siguiente"
+            style={{ width: 34, height: 34, borderRadius: 9, border: `1px solid ${C.line}`, background: C.white, cursor: "pointer", fontSize: 16 }}>›</button>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 4, marginBottom: 6 }}>
+          {DOW_LABELS.map((d) => (
+            <div key={d} style={{ textAlign: "center", fontSize: 11, fontWeight: 700, color: C.muted, padding: "4px 0" }}>{d}</div>
+          ))}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 4 }}>
+          {cells.map((d, i) => {
+            if (!d) return <div key={`e${i}`} />;
+            const dis = isDisabled(d);
+            const sel = selDate === dateStr(d);
+            return (
+              <button key={d} onClick={() => !dis && pickDay(d)} disabled={dis}
+                style={{
+                  aspectRatio: "1", borderRadius: 9, fontSize: 14, fontFamily: "inherit",
+                  border: sel ? `1.5px solid ${O}` : `1px solid ${dis ? "transparent" : C.line}`,
+                  background: sel ? O : (dis ? "transparent" : C.white),
+                  color: sel ? "#fff" : (dis ? "#c9c2b8" : C.ink),
+                  cursor: dis ? "default" : "pointer", fontWeight: sel ? 700 : 500,
+                }}>
+                {d}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Horarios + formulario */}
+      <div style={{ background: C.white, border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, minHeight: 320 }}>
+        {!selDate && (
+          <div style={{ color: C.muted, fontSize: 15, lineHeight: 1.6, paddingTop: 8 }}>
+            Elegí un día en el calendario para ver los horarios disponibles. <br /><br />
+            <span style={{ fontSize: 13 }}>Lun a Vie · 10:00–18:00 (hora de Argentina) · reuniones de 30 min.</span>
+          </div>
+        )}
+
+        {selDate && (
+          <>
+            <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1, color: C.muted, fontWeight: 600, marginBottom: 10 }}>
+              Horarios · {selDate.split("-").reverse().join("/")}
+            </div>
+            {loadingSlots && <div style={{ color: C.muted, fontSize: 14 }}>Cargando horarios…</div>}
+            {slotsErr && (
+              <div style={{ color: C.muted, fontSize: 14, lineHeight: 1.6 }}>
+                No pudimos cargar los horarios ahora. <button onClick={() => pickDay(Number(selDate.slice(8, 10)))} style={{ color: O, background: "none", border: "none", cursor: "pointer", fontWeight: 600, padding: 0 }}>Reintentar</button>
+              </div>
+            )}
+            {!loadingSlots && !slotsErr && slots && slots.length === 0 && (
+              <div style={{ color: C.muted, fontSize: 14 }}>No quedan horarios libres este día. Probá con otra fecha 🗓️</div>
+            )}
+            {!loadingSlots && !slotsErr && slots && slots.length > 0 && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 18 }}>
+                {slots.map((t) => (
+                  <button key={t} onClick={() => setSelTime(t)}
+                    style={{
+                      padding: "9px 0", borderRadius: 9, fontSize: 13.5, fontFamily: "inherit", cursor: "pointer",
+                      border: selTime === t ? `1.5px solid ${O}` : `1px solid ${C.line}`,
+                      background: selTime === t ? O : C.white, color: selTime === t ? "#fff" : C.ink,
+                      fontWeight: selTime === t ? 700 : 500,
+                    }}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {selTime && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 6, animation: "fadeUp .3s ease" }}>
+                {fld("name", "Nombre y apellido *")}
+                {fld("company", "Empresa")}
+                {fld("email", "Email *", "email")}
+                {fld("phone", "Teléfono / WhatsApp *", "tel")}
+                <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
+                  style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "11px 14px", fontSize: 14.5, fontFamily: "inherit", background: C.white }}>
+                  <option>Llamada</option>
+                  <option>Videollamada (Meet)</option>
+                </select>
+                {fld("note", "Contanos brevemente qué necesitás (opcional)")}
+                {status === "error" && <div style={{ color: "#c0392b", fontSize: 13.5 }}>{errMsg}</div>}
+                <button onClick={submit} disabled={!valid || status === "submitting"}
+                  style={{
+                    background: O, color: "#fff", border: "none", borderRadius: 11, padding: "13px 0",
+                    fontSize: 15.5, fontWeight: 700, fontFamily: "inherit",
+                    cursor: valid && status !== "submitting" ? "pointer" : "default",
+                    opacity: valid && status !== "submitting" ? 1 : 0.55,
+                  }}>
+                  {status === "submitting" ? "Agendando…" : "Confirmar reunión"}
+                </button>
+                <div style={{ fontSize: 11.5, color: C.muted, textAlign: "center" }}>* Nombre y al menos un medio de contacto.</div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 }
