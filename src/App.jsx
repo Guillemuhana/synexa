@@ -95,6 +95,12 @@ const getCases = (L) => [
     solution: L(
       "A WhatsApp sales agent + AI CRM that quotes, qualifies the lead and books on its own.",
       "Agente de ventas en WhatsApp + CRM con IA que cotiza, califica el lead y agenda solo."),
+    highlights: [
+      L("24/7 AI agent on WhatsApp", "Agente de IA 24/7 en WhatsApp"),
+      L("Instant quotes and lead qualification", "Cotizaciones al instante y calificación de leads"),
+      L("Automatic CRM data entry", "Carga automática de datos al CRM"),
+      L("Self-scheduling of calls and visits", "Auto-agendado de llamadas y visitas"),
+    ],
     metrics: [
       ["87%", L("inquiries resolved by AI", "consultas resueltas por IA")],
       ["24/7", L("always-on attention", "atención sin cortes")],
@@ -112,6 +118,12 @@ const getCases = (L) => [
     solution: L(
       "Custom CRM with user roles (sales, admin and CEO), internal team chat, real-time inbox, bot/human toggle, follow-ups, reports with counters and PDF export.",
       "CRM a medida con roles por usuario (vendedores, administración y CEO), chat interno del equipo, inbox en tiempo real, toggle bot/humano, follow-ups, reportes con contadores y descarga de PDF."),
+    highlights: [
+      L("Custom CRM with user roles", "CRM a medida con roles por usuario"),
+      L("Real-time inbox with bot/human toggle", "Inbox en tiempo real con toggle bot/humano"),
+      L("Internal team chat", "Chat interno del equipo"),
+      L("Reports with counters and PDF export", "Reportes con contadores y descarga de PDF"),
+    ],
     metrics: [
       ["1 panel", L("for the whole team", "para todo el equipo")],
       ["-60%", L("management time", "tiempo de gestión")],
@@ -872,6 +884,21 @@ export default function App() {
                       <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1, color: C.muted, marginBottom: 5, fontWeight: 600 }}>{L("The solution", "La solución")}</div>
                       <p style={{ fontSize: 15.5, color: C.inkSoft, lineHeight: 1.55 }}>{cs.solution}</p>
                     </div>
+                    {/* qué construimos: rellena el espacio del bloque */}
+                    {cs.highlights && (
+                      <div style={{ marginTop: 24 }}>
+                        <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1, color: C.muted, marginBottom: 12, fontWeight: 600 }}>
+                          {L("What we built", "Lo que construimos")}
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 18px" }}>
+                          {cs.highlights.map((h) => (
+                            <div key={h} style={{ display: "flex", alignItems: "flex-start", gap: 9, fontSize: 14, color: C.inkSoft, lineHeight: 1.4 }}>
+                              <span style={{ color: C.orange, fontWeight: 700, flexShrink: 0 }}>✓</span>{h}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     {/* stack de herramientas usadas (rellena el espacio inferior) */}
                     {cs.stack && (
                       <div style={{ marginTop: "auto", paddingTop: 30 }}>
