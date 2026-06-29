@@ -18,11 +18,11 @@ const C = {
   ink: "#f4f5f7",        // texto principal claro
   inkSoft: "#c4c8d2",    // texto secundario
   muted: "#8b909c",      // texto atenuado
-  line: "#23262e",       // bordes oscuros
+  line: "#2c303b",       // bordes (un poco más visibles)
   bg: "#08090c",         // fondo casi negro
-  bgAlt: "#0d0f14",      // banda apenas más clara
-  card: "#101218",       // superficie de tarjetas
-  cardLine: "#23262e",
+  bgAlt: "#0f1218",      // banda diferenciada
+  card: "#15181f",       // superficie de tarjetas (más separada del fondo)
+  cardLine: "#2c303b",
   white: "#ffffff",      // se mantiene blanco puro (texto sobre botones claros: se fuerza por CSS)
 };
 
@@ -336,7 +336,7 @@ export default function App() {
 
   return (
     <LangCtx.Provider value={{ lang, L, setLang }}>
-    <div style={{ fontFamily: sans, color: C.ink, background: "radial-gradient(1200px 620px at 72% -12%, rgba(255,255,255,.07), transparent 60%), #08090c", overflowX: "hidden" }}>
+    <div style={{ fontFamily: sans, color: C.ink, background: "radial-gradient(1100px 560px at 55% -8%, rgba(255,255,255,.085), transparent 62%), #08090c", overflowX: "hidden" }}>
       {/* Fuentes + keyframes globales */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;1,500&display=swap');
@@ -357,6 +357,14 @@ export default function App() {
         .logo-wrap { position: relative; display: flex; align-items: center; gap: 10px; }
         .shooting-star { position: absolute; left: 0; top: 6px; width: 46px; height: 2px; border-radius: 99px; pointer-events: none; opacity: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.92)); animation: shoot 6s ease-in-out infinite; }
         .shooting-star::after { content: ""; position: absolute; right: -1px; top: -1.5px; width: 5px; height: 5px; border-radius: 99px; background: #fff; box-shadow: 0 0 9px 2px rgba(255,255,255,.85); }
+        @keyframes meteor {
+          0%   { opacity: 0; transform: translate(0, 0) rotate(135deg); }
+          8%   { opacity: 1; }
+          85%  { opacity: 1; }
+          100% { opacity: 0; transform: translate(-320px, 320px) rotate(135deg); }
+        }
+        .meteor { position: absolute; top: -24px; width: 110px; height: 2px; border-radius: 99px; pointer-events: none; opacity: 0; background: linear-gradient(90deg, rgba(255,255,255,.9), transparent); animation: meteor 5.5s linear infinite; }
+        .meteor::after { content: ""; position: absolute; left: -1px; top: -1.5px; width: 5px; height: 5px; border-radius: 99px; background: #fff; box-shadow: 0 0 10px 2px rgba(255,255,255,.7); }
         a { color: inherit; text-decoration: none; }
         .btn-primary { background: ${C.grad} !important; color: #0a0b0e !important; border: none !important; box-shadow: 0 8px 28px -8px rgba(255,255,255,.28); }
         .btn-primary:hover { filter: brightness(1.04); transform: translateY(-2px); }
@@ -488,7 +496,7 @@ export default function App() {
       <header
         className="hero-pad"
         style={{
-          position: "relative",
+          position: "relative", overflow: "hidden",
           padding: "150px 40px 90px",
           maxWidth: 1180, margin: "0 auto",
         }}
@@ -504,6 +512,17 @@ export default function App() {
           background: `radial-gradient(circle, ${C.violet}22, transparent 70%)`,
           filter: "blur(40px)", zIndex: 0, pointerEvents: "none",
         }} />
+        {/* lluvia de meteoritos (detrás del contenido) */}
+        {[
+          { left: "16%", delay: "1.4s", dur: "5s" },
+          { left: "42%", delay: "3.6s", dur: "6.2s" },
+          { left: "63%", delay: "0.6s", dur: "5.4s" },
+          { left: "82%", delay: "5.2s", dur: "6.8s" },
+          { left: "94%", delay: "2.4s", dur: "5.8s" },
+        ].map((m, i) => (
+          <span key={i} className="meteor" aria-hidden="true"
+            style={{ left: m.left, animationDelay: m.delay, animationDuration: m.dur }} />
+        ))}
         {/* fondo de código escribiéndose (muy sutil, detrás del contenido) */}
         <CodeBackdrop />
         <div className="hero-grid" style={{
