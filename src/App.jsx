@@ -1345,7 +1345,7 @@ function FlowDiagram() {
   ];
 
   const roles = [
-    { label: "CHAT MODEL", x: 58 },
+    { label: "CHAT MODEL*", x: 58 },
     { label: "MEMORY", x: 166 },
     { label: "TOOL", x: 382 },
   ];
