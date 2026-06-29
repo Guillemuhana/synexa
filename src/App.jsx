@@ -1318,159 +1318,159 @@ function CodeBackdrop() {
   );
 }
 
-// ---- Canvas tipo n8n: Trigger -> AI Agent (Chat Model OpenAI + Memory + Tools) -> salidas ----
+// ---- Canvas tipo n8n REAL: Trigger -> AI Agent (robot) con Chat Model / Memory / Tools ----
 function FlowDiagram() {
   const O = "#6366f1";
-  const nodeFill = "#11141b";
+  const nodeFill = "#181b22";
+  const agentFill = "#1c2030";
   const stroke = "rgba(255,255,255,.16)";
-  const wire = "rgba(255,255,255,.28)";
+  const wire = "rgba(255,255,255,.3)";
   const muted = "#8b909c";
   const F = "Inter, sans-serif";
+  const R = 27;          // radio de los nodos circulares
+  const CY = 270;        // centro vertical de los círculos
+  const TOP = CY - R;    // tope de los círculos
 
-  // Flujo principal (izquierda -> derecha). Centro del Agent en y=120.
-  const flow = [
-    { x: 12,  y: 92,  w: 140, h: 56, label: "WhatsApp", sub: "Trigger",     accent: "#25d366", logo: "whatsapp" },
-    { x: 212, y: 80,  w: 152, h: 80, label: "AI Agent", sub: "Tools Agent", icon: "✦", accent: O, hot: true },
-    { x: 416, y: 86,  w: 116, h: 52, label: "Respond",  sub: "WhatsApp",    accent: "#25d366", logo: "whatsapp" },
-    { x: 416, y: 150, w: 116, h: 52, label: "CRM",      sub: "Supabase",    accent: "#3ecf8e", logo: "supabase" },
-  ];
-
-  // Sub-nodos colgando del AI Agent (puertos reales de n8n), alineados en y=292.
-  const sub = [
-    { x: 8,   y: 292, w: 100, h: 58, label: "OpenAI",   sub: "gpt-4o",   accent: "#10a37f", logo: "openai",         port: 250, cx: 58 },
-    { x: 116, y: 292, w: 100, h: 58, label: "Postgres", sub: "Memory",   accent: "#336791", logo: "postgresql",     port: 288, cx: 166 },
-    { x: 224, y: 292, w: 100, h: 58, label: "Calendar", sub: "Google",   accent: "#4285f4", logo: "googlecalendar", port: 326, cx: 274 },
-    { x: 332, y: 292, w: 100, h: 58, label: "Sheets",   sub: "Google",   accent: "#0f9d58", logo: "googlesheets",   port: 326, cx: 382 },
-    { x: 440, y: 292, w: 100, h: 58, label: "Supabase", sub: "Database", accent: "#3ecf8e", logo: "supabase",       port: 326, cx: 490 },
-  ];
-
-  const roles = [
-    { label: "CHAT MODEL*", x: 58 },
-    { label: "MEMORY", x: 166 },
-    { label: "TOOL", x: 382 },
-  ];
-
-  // Enlaces del flujo principal
-  const links = [
-    "M 152 120 C 184 120, 184 120, 212 120",     // WhatsApp -> Agent
-    "M 364 120 C 392 120, 392 112, 416 112",     // Agent -> Respond
-    "M 364 120 C 392 120, 392 176, 416 176",     // Agent -> CRM
-  ];
-
-  // Puerto inferior del Agent (y=160) -> top del sub-nodo (y=292)
-  const subLinks = sub.map((n) => `M ${n.port} 160 C ${n.port} 224, ${n.cx} 234, ${n.cx} 292`);
-
-  // chip de icono + textos de un nodo (estilo n8n)
-  const Node = ({ n, hot }) => {
-    const cs = hot ? 34 : 24;
-    const cy = n.y + (n.h - cs) / 2;
-    const mid = n.y + n.h / 2;
-    const tx = n.x + 10 + cs + 9;
+  // Robot (icono del AI Agent), blanco con ojos del color del nodo
+  const Robot = ({ cx, cy, s = 26, eye = agentFill }) => (
+    <g>
+      <line x1={cx} y1={cy - s * 0.6} x2={cx} y2={cy - s * 0.44} stroke="#fff" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx={cx} cy={cy - s * 0.66} r={s * 0.07} fill="#fff" />
+      <rect x={cx - s * 0.55} y={cy - s * 0.16} width={s * 0.1} height={s * 0.26} rx="2" fill="#fff" />
+      <rect x={cx + s * 0.45} y={cy - s * 0.16} width={s * 0.1} height={s * 0.26} rx="2" fill="#fff" />
+      <rect x={cx - s * 0.42} y={cy - s * 0.42} width={s * 0.84} height={s * 0.72} rx={s * 0.2} fill="#fff" />
+      <circle cx={cx - s * 0.16} cy={cy - s * 0.04} r={s * 0.085} fill={eye} />
+      <circle cx={cx + s * 0.16} cy={cy - s * 0.04} r={s * 0.085} fill={eye} />
+      <rect x={cx - s * 0.14} y={cy + s * 0.16} width={s * 0.28} height={s * 0.05} rx="2" fill={eye} />
+    </g>
+  );
+  // Cilindro de base de datos (memoria)
+  const DBIcon = ({ cx, cy, s = 22 }) => {
+    const rx = s * 0.42, ry = s * 0.16;
     return (
-      <>
-        <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="13"
-          fill={hot ? O : nodeFill} stroke={hot ? "#c7d2fe" : stroke} strokeWidth="1.5" />
-        <rect x={n.x + 10} y={cy} width={cs} height={cs} rx="7" fill={hot ? "#fff" : n.accent} />
-        {n.logo === "openai" ? (
-          <g transform={`translate(${n.x + 10 + cs * 0.2}, ${cy + cs * 0.2}) scale(${(cs * 0.6) / 24})`}>
-            <path d={OPENAI_PATH} fill="#fff" />
-          </g>
-        ) : n.logo ? (
-          <image
-            href={`https://cdn.simpleicons.org/${n.logo}/ffffff`}
-            x={n.x + 10 + cs * 0.2} y={cy + cs * 0.2}
-            width={cs * 0.6} height={cs * 0.6}
-          />
-        ) : (
-          <text x={n.x + 10 + cs / 2} y={cy + cs / 2 + (hot ? 6 : 5)} fontSize={hot ? "18" : "14"}
-            textAnchor="middle" fill={hot ? O : "#fff"}>{n.icon}</text>
-        )}
-        <text x={tx} y={mid - 3} fontSize={hot ? "15" : "12.5"} fill="#fff" fontFamily={F} fontWeight="700">{n.label}</text>
-        <text x={tx} y={mid + 12} fontSize={hot ? "10.5" : "9.5"} fontFamily={F} fontWeight="500"
-          fill={hot ? "rgba(255,255,255,.82)" : muted}>{n.sub}</text>
-      </>
+      <g fill="none" stroke="#fff" strokeWidth="1.5">
+        <ellipse cx={cx} cy={cy - s * 0.3} rx={rx} ry={ry} />
+        <path d={`M ${cx - rx} ${cy - s * 0.3} V ${cy + s * 0.3} a ${rx} ${ry} 0 0 0 ${rx * 2} 0 V ${cy - s * 0.3}`} />
+        <path d={`M ${cx - rx} ${cy} a ${rx} ${ry} 0 0 0 ${rx * 2} 0`} />
+      </g>
     );
   };
+  const Diamond = ({ x, y }) => (
+    <rect x={x - 3.4} y={y - 3.4} width="6.8" height="6.8" rx="1.4" fill={nodeFill} stroke={stroke} strokeWidth="1.2" transform={`rotate(45 ${x} ${y})`} />
+  );
+
+  // Sub-nodos circulares (model / memory / tools). port = [x,y] del puerto del agente.
+  const subs = [
+    { cx: 80,  kind: "model",  logo: "openai",         label: "OpenAI Chat Model", role: "Model",  port: [248, 140] },
+    { cx: 188, kind: "memory",                          label: "Simple Memory",     role: "Memory", port: [300, 140] },
+    { cx: 318, kind: "tool",   logo: "whatsapp",       label: "Send WhatsApp", sub: "sendMessage", color: "#25d366", port: [352, 158] },
+    { cx: 418, kind: "tool",   logo: "googlecalendar", label: "Calendar",      sub: "createEvent", color: "#4285f4", port: [352, 158] },
+    { cx: 514, kind: "tool",   logo: "supabase",       label: "Update CRM",    sub: "updateRow",   color: "#3ecf8e", port: [352, 158] },
+  ];
+  const subLink = (s) => `M ${s.port[0]} ${s.port[1]} C ${s.port[0]} ${TOP - 30}, ${s.cx} ${TOP - 36}, ${s.cx} ${TOP}`;
 
   return (
-    <svg viewBox="0 0 548 384" style={{ width: "100%", maxWidth: 520, display: "block", margin: "0 auto" }}>
+    <svg viewBox="0 0 560 352" style={{ width: "100%", maxWidth: 540, display: "block", margin: "0 auto" }}>
       <defs>
         <radialGradient id="agentGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor={O} stopOpacity="0.5" />
+          <stop offset="0%" stopColor={O} stopOpacity="0.45" />
           <stop offset="100%" stopColor={O} stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      {/* grilla de puntos de fondo */}
+      {/* grilla de puntos */}
       <g fill="rgba(255,255,255,.05)">
-        {Array.from({ length: 11 }).map((_, r) =>
+        {Array.from({ length: 10 }).map((_, r) =>
           Array.from({ length: 16 }).map((__, c) => (
             <circle key={`${r}-${c}`} cx={10 + c * 36} cy={14 + r * 36} r="1" />
           ))
         )}
       </g>
 
-      {/* conexiones del Agent a sus sub-nodos (punteadas + pulso) */}
+      {/* conexión trigger -> agente (sólida con pulso) */}
+      <g fill="none">
+        <path d="M 102 108 H 206" stroke={wire} strokeWidth="2" />
+        <path d="M 102 108 H 206" stroke={O} strokeWidth="2.6" strokeDasharray="5 90"
+          style={{ animation: "flow 1.7s linear infinite" }} />
+        <path d="M 200 104 L 207 108 L 200 112 Z" fill={wire} />
+      </g>
+
+      {/* conexiones agente -> sub-nodos (punteadas + pulso) */}
       <g fill="none" stroke={stroke} strokeWidth="1.4" strokeDasharray="3 4">
-        {subLinks.map((d, i) => <path key={`s-${i}`} d={d} />)}
+        {subs.map((s, i) => <path key={`s-${i}`} d={subLink(s)} />)}
       </g>
       <g fill="none" strokeWidth="2">
-        {subLinks.map((d, i) => (
-          <path key={`sf-${i}`} d={d} stroke={O} strokeDasharray="4 70"
-            style={{ animation: `flow 2.2s linear infinite`, animationDelay: `${i * 0.3}s` }} />
+        {subs.map((s, i) => (
+          <path key={`sf-${i}`} d={subLink(s)} stroke={O} strokeDasharray="4 70"
+            style={{ animation: "flow 2.3s linear infinite", animationDelay: `${i * 0.28}s` }} />
         ))}
       </g>
 
-      {/* líneas del flujo principal */}
-      <g fill="none" strokeWidth="2">
-        {links.map((d, i) => <path key={`base-${i}`} d={d} stroke={wire} />)}
-        {links.map((d, i) => (
-          <path key={`flow-${i}`} d={d} stroke={O} strokeWidth="2.6" strokeDasharray="5 95"
-            style={{ animation: `flow 1.7s linear infinite`, animationDelay: `${i * 0.25}s` }} />
+      {/* diamantes en puertos del agente y tope de círculos */}
+      <Diamond x={248} y={140} /><Diamond x={300} y={140} /><Diamond x={352} y={140} />
+      {subs.map((s, i) => <Diamond key={`d-${i}`} x={s.cx} y={TOP} />)}
+
+      {/* etiquetas de puerto del agente */}
+      <text x={248} y={154} fontSize="7.5" textAnchor="middle" fill="#c98aa0" fontFamily={F} fontWeight="700">Chat Model*</text>
+      <text x={300} y={154} fontSize="7.5" textAnchor="middle" fill={muted} fontFamily={F} fontWeight="700">Memory</text>
+      <text x={352} y={154} fontSize="7.5" textAnchor="middle" fill={muted} fontFamily={F} fontWeight="700">Tool</text>
+      {/* botón + del puerto Tool */}
+      <g>
+        <rect x={345} y={162} width="14" height="14" rx="4" fill={nodeFill} stroke={stroke} strokeWidth="1.1" />
+        <text x={352} y={172} fontSize="11" textAnchor="middle" fill={muted}>+</text>
+      </g>
+
+      {/* ===== TRIGGER (cuadrado redondeado) ===== */}
+      <g>
+        <rect x={16} y={68} width={84} height={84} rx={18} fill={nodeFill} stroke={stroke} strokeWidth="1.5" />
+        {/* badge rayo (trigger) */}
+        <path d="M 23 92 l 7 -12 l -2 9 l 6 -1 l -9 14 l 2 -10 Z" fill="#ff5a3c" />
+        {/* logo WhatsApp del trigger */}
+        <image href="https://cdn.simpleicons.org/whatsapp/25d366" x={42} y={92} width={32} height={32} />
+        <text x={58} y={170} fontSize="9.5" textAnchor="middle" fill="#d6d9e0" fontFamily={F} fontWeight="600">WhatsApp message</text>
+        <text x={58} y={182} fontSize="9.5" textAnchor="middle" fill={muted} fontFamily={F} fontWeight="600">received</text>
+      </g>
+
+      {/* ===== AI AGENT ===== */}
+      <circle cx={297} cy={108} r="70" fill="url(#agentGlow)" style={{ animation: "pulse 2.6s ease-in-out infinite" }} />
+      <rect x={206} y={82} width={182} height={54} rx={14} fill={agentFill} stroke="rgba(124,131,255,.6)" strokeWidth="1.5" />
+      <Robot cx={236} cy={108} s={26} />
+      <text x={262} y={104} fontSize="14.5" fill="#fff" fontFamily={F} fontWeight="700">AI Agent</text>
+      <text x={262} y={119} fontSize="9.5" fill={muted} fontFamily={F} fontWeight="500">Tools Agent</text>
+      {/* puerto de salida + */}
+      <g>
+        <line x1={388} y1={108} x2={402} y2={108} stroke={wire} strokeWidth="2" />
+        <rect x={402} y={101} width={14} height={14} rx="4" fill={nodeFill} stroke={stroke} strokeWidth="1.1" />
+        <text x={409} y={111} fontSize="11" textAnchor="middle" fill={muted}>+</text>
+      </g>
+      {/* thinking dots */}
+      <g fill="#fff">
+        {[0, 1, 2].map((d) => (
+          <circle key={d} cx={350 + d * 7} cy={108} r="1.8"
+            style={{ animation: "pulse 1.2s ease-in-out infinite", animationDelay: `${d * 0.2}s` }} />
         ))}
       </g>
 
-      {/* puntos de puerto (conectores estilo n8n) */}
-      <g fill="#11141b" stroke={stroke} strokeWidth="1.2">
-        <circle cx="152" cy="120" r="3.4" />
-        <circle cx="212" cy="120" r="3.4" />
-        <circle cx="364" cy="120" r="3.4" />
-        <circle cx="416" cy="112" r="3.4" />
-        <circle cx="416" cy="176" r="3.4" />
-        <circle cx="250" cy="160" r="3.2" />
-        <circle cx="288" cy="160" r="3.2" />
-        <circle cx="326" cy="160" r="3.2" />
-        {sub.map((n, i) => <circle key={`pt-${i}`} cx={n.cx} cy="292" r="3.2" />)}
-      </g>
-
-      {/* etiquetas de rol bajo el Agent (Chat Model / Memory / Tool) */}
-      {roles.map((r, i) => (
-        <text key={`role-${i}`} x={r.x} y={280} fontSize="8.5" textAnchor="middle"
-          fill={muted} fontFamily={F} fontWeight="700" letterSpacing="0.7">{r.label}</text>
-      ))}
-
-      {/* sub-nodos: modelo, memoria, herramientas */}
-      {sub.map((n, i) => (
-        <g key={`sub-${i}`} style={{ animation: "float 5s ease-in-out infinite", animationDelay: `${i * 0.4}s` }}>
-          <Node n={n} hot={false} />
-        </g>
-      ))}
-
-      {/* nodos del flujo principal */}
-      {flow.map((n, i) => (
-        <g key={`flow-n-${i}`}>
-          {n.hot && (
-            <circle cx={n.x + n.w / 2} cy={n.y + n.h / 2} r="62" fill="url(#agentGlow)"
-              style={{ animation: "pulse 2.4s ease-in-out infinite" }} />
+      {/* ===== SUB-NODOS CIRCULARES ===== */}
+      {subs.map((s, i) => (
+        <g key={`circle-${i}`} style={{ animation: "float 5s ease-in-out infinite", animationDelay: `${i * 0.35}s` }}>
+          {s.role && (
+            <text x={s.cx} y={TOP - 8} fontSize="8" textAnchor="middle" fill={muted} fontFamily={F} fontWeight="600">{s.role}</text>
           )}
-          <Node n={n} hot={!!n.hot} />
-          {n.hot && (
-            <g fill="#fff">
-              {[0, 1, 2].map((d) => (
-                <circle key={d} cx={n.x + n.w / 2 - 9 + d * 9} cy={n.y + n.h - 13} r="2.4"
-                  style={{ animation: "pulse 1.2s ease-in-out infinite", animationDelay: `${d * 0.2}s` }} />
-              ))}
+          <circle cx={s.cx} cy={CY} r={R} fill={nodeFill} stroke={s.color ? `${s.color}88` : stroke} strokeWidth="1.6" />
+          {s.kind === "model" ? (
+            <g transform={`translate(${s.cx - 13}, ${CY - 13}) scale(${26 / 24})`}>
+              <path d={OPENAI_PATH} fill="#fff" />
             </g>
+          ) : s.kind === "memory" ? (
+            <DBIcon cx={s.cx} cy={CY} s={24} />
+          ) : (
+            <image href={`https://cdn.simpleicons.org/${s.logo}/${(s.color || "#fff").replace("#", "")}`}
+              x={s.cx - 13} y={CY - 13} width={26} height={26} />
+          )}
+          <text x={s.cx} y={CY + R + 14} fontSize="9.5" textAnchor="middle" fill="#e8eaf0" fontFamily={F} fontWeight="600">{s.label}</text>
+          {s.sub && (
+            <text x={s.cx} y={CY + R + 25} fontSize="8" textAnchor="middle" fill={muted} fontFamily={F}>{s.sub}</text>
           )}
         </g>
       ))}
