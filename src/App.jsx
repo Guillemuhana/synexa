@@ -348,6 +348,15 @@ export default function App() {
         @keyframes flow { from { stroke-dashoffset: 95; } to { stroke-dashoffset: 0; } }
         @keyframes growBar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
         @keyframes ringPulse { 0% { transform: scale(1); opacity:.7; } 100% { transform: scale(1.5); opacity:0; } }
+        @keyframes shoot {
+          0%   { opacity: 0; transform: translate(-14px, 30px) rotate(-28deg); }
+          6%   { opacity: 1; }
+          22%  { opacity: 0; transform: translate(168px, -26px) rotate(-28deg); }
+          100% { opacity: 0; transform: translate(168px, -26px) rotate(-28deg); }
+        }
+        .logo-wrap { position: relative; display: flex; align-items: center; gap: 10px; }
+        .shooting-star { position: absolute; left: 0; top: 6px; width: 46px; height: 2px; border-radius: 99px; pointer-events: none; opacity: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.92)); animation: shoot 6s ease-in-out infinite; }
+        .shooting-star::after { content: ""; position: absolute; right: -1px; top: -1.5px; width: 5px; height: 5px; border-radius: 99px; background: #fff; box-shadow: 0 0 9px 2px rgba(255,255,255,.85); }
         a { color: inherit; text-decoration: none; }
         .btn-primary { background: ${C.grad} !important; color: #0a0b0e !important; border: none !important; box-shadow: 0 8px 28px -8px rgba(255,255,255,.28); }
         .btn-primary:hover { filter: brightness(1.04); transform: translateY(-2px); }
@@ -391,8 +400,9 @@ export default function App() {
           borderBottom: `1px solid ${C.line}`,
         }}
       >
-        <a href="#top" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <a href="#top" className="logo-wrap">
           <img src={logoLight} alt="SYNEXA" style={{ height: 26, width: "auto", display: "block", filter: "brightness(0) invert(1)" }} />
+          <span className="shooting-star" aria-hidden="true" />
         </a>
 
         <div className="nav-links" style={{ display: "flex", gap: 30, fontSize: 15, color: C.inkSoft }}>
