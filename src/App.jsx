@@ -1359,17 +1359,23 @@ function FlowDiagram() {
     <rect x={x - 3.4} y={y - 3.4} width="6.8" height="6.8" rx="1.4" fill={nodeFill} stroke={stroke} strokeWidth="1.2" transform={`rotate(45 ${x} ${y})`} />
   );
 
-  // Sub-nodos circulares (model / memory / tools). port = [x,y] del puerto del agente.
+  // Sub-nodos circulares (model / memory / tools), colgando bajo el agente.
   const subs = [
-    { cx: 72,  kind: "model",  logo: "openai",         label: "OpenAI Chat Model", role: "Model",  port: [248, 140] },
-    { cx: 176, kind: "memory",                          label: "Simple Memory",     role: "Memory", port: [300, 140] },
-    { cx: 300, kind: "tool", logo: "whatsapp",       label: "WhatsApp", sub: "sendMessage", color: "#25d366", port: [352, 158] },
-    { cx: 396, kind: "tool", logo: "googlecalendar", label: "Calendar", sub: "createEvent", color: "#4285f4", port: [352, 158] },
-    { cx: 492, kind: "tool", logo: "googlesheets",   label: "Sheets",   sub: "appendRow",   color: "#0f9d58", port: [352, 158] },
-    { cx: 588, kind: "tool", logo: "gmail",          label: "Gmail",    sub: "sendEmail",   color: "#ea4335", port: [352, 158] },
-    { cx: 678, kind: "tool", logo: "supabase",       label: "Supabase", sub: "updateRow",   color: "#3ecf8e", port: [352, 158] },
+    { cx: 118, kind: "model",  logo: "openai",       label: "OpenAI Chat Model", role: "Model",  port: [248, 140] },
+    { cx: 232, kind: "memory",                        label: "Simple Memory",     role: "Memory", port: [300, 140] },
+    { cx: 348, kind: "tool", logo: "googlesheets", label: "Sheets",   sub: "appendRow", color: "#0f9d58", port: [352, 158] },
+    { cx: 452, kind: "tool", logo: "supabase",     label: "Supabase", sub: "updateRow", color: "#3ecf8e", port: [352, 158] },
   ];
   const subLink = (s) => `M ${s.port[0]} ${s.port[1]} C ${s.port[0]} ${TOP - 30}, ${s.cx} ${TOP - 36}, ${s.cx} ${TOP}`;
+
+  // Salidas del agente (puerto + de la derecha): acciones del flujo principal.
+  const OX = 470, OW = 168, OH = 46;
+  const outputs = [
+    { y: 50,  logo: "whatsapp",       label: "Send WhatsApp", sub: "sendMessage", color: "#25d366" },
+    { y: 108, logo: "gmail",          label: "Send Email",    sub: "Gmail",       color: "#ea4335" },
+    { y: 166, logo: "googlecalendar", label: "Book Meeting",  sub: "Calendar",    color: "#4285f4" },
+  ];
+  const outLink = (o) => { const oy = o.y + OH / 2; return `M 416 108 C 444 108, 444 ${oy}, ${OX} ${oy}`; };
 
   return (
     <svg viewBox="0 0 720 352" style={{ width: "100%", maxWidth: 560, display: "block", margin: "0 auto" }}>
@@ -1395,6 +1401,15 @@ function FlowDiagram() {
         <path d="M 102 108 H 206" stroke={O} strokeWidth="2.6" strokeDasharray="5 90"
           style={{ animation: "flow 1.7s linear infinite" }} />
         <path d="M 200 104 L 207 108 L 200 112 Z" fill={wire} />
+      </g>
+
+      {/* conexiones del puerto + (salida) -> acciones (sólidas con pulso) */}
+      <g fill="none">
+        {outputs.map((o, i) => <path key={`ob-${i}`} d={outLink(o)} stroke={wire} strokeWidth="2" />)}
+        {outputs.map((o, i) => (
+          <path key={`of-${i}`} d={outLink(o)} stroke={O} strokeWidth="2.4" strokeDasharray="5 80"
+            style={{ animation: "flow 1.9s linear infinite", animationDelay: `${i * 0.3}s` }} />
+        ))}
       </g>
 
       {/* conexiones agente -> sub-nodos (punteadas + pulso) */}
@@ -1452,6 +1467,18 @@ function FlowDiagram() {
             style={{ animation: "pulse 1.2s ease-in-out infinite", animationDelay: `${d * 0.2}s` }} />
         ))}
       </g>
+
+      {/* ===== NODOS DE SALIDA (acciones del flujo) ===== */}
+      {outputs.map((o, i) => (
+        <g key={`out-${i}`}>
+          <Diamond x={OX} y={o.y + OH / 2} />
+          <rect x={OX} y={o.y} width={OW} height={OH} rx="12" fill={nodeFill} stroke={`${o.color}88`} strokeWidth="1.5" />
+          <rect x={OX + 11} y={o.y + (OH - 26) / 2} width="26" height="26" rx="7" fill={o.color} />
+          <image href={`https://cdn.simpleicons.org/${o.logo}/ffffff`} x={OX + 11 + 5.2} y={o.y + (OH - 26) / 2 + 5.2} width="15.6" height="15.6" />
+          <text x={OX + 47} y={o.y + OH / 2 - 2} fontSize="12.5" fill="#fff" fontFamily={F} fontWeight="700">{o.label}</text>
+          <text x={OX + 47} y={o.y + OH / 2 + 12} fontSize="9" fill={muted} fontFamily={F} fontWeight="500">{o.sub}</text>
+        </g>
+      ))}
 
       {/* ===== SUB-NODOS CIRCULARES ===== */}
       {subs.map((s, i) => (
