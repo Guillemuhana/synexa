@@ -9,16 +9,18 @@ import logoLight from "/synexa-logo-transparent.png";
 
 const BRAND = "SYNEXA";
 
-// ---- Paleta (extraída del logo) ----
+// ---- Paleta: fondo blanco + acento azul/violeta (estilo plataforma de IA) ----
 const C = {
-  orange: "#dd7b52",     // naranja de la X del logo
-  orangeDeep: "#c96b45", // variante oscura para hover
-  ink: "#26303a",        // tinta del wordmark (gris azulado)
-  inkSoft: "#3d4751",
-  muted: "#6f7882",
-  line: "#e6e1d9",
-  bg: "#fcf9f5",         // crema del fondo del logo
-  bgAlt: "#f4efe8",
+  orange: "#6366f1",     // acento principal (indigo) — clave 'orange' por compatibilidad
+  orangeDeep: "#4f46e5", // variante oscura para hover
+  violet: "#8b5cf6",     // segundo color del degradé
+  grad: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+  ink: "#0e1116",        // texto principal casi negro
+  inkSoft: "#3a4150",
+  muted: "#6b7280",
+  line: "#e7e9f2",
+  bg: "#ffffff",         // fondo blanco
+  bgAlt: "#f5f7ff",      // gris azulado muy claro para bandas
   white: "#ffffff",
 };
 
@@ -222,7 +224,7 @@ export default function App() {
   const serif = "'Lora', Georgia, 'Times New Roman', serif";
 
   return (
-    <div style={{ fontFamily: sans, color: C.ink, background: C.bg, overflowX: "hidden" }}>
+    <div style={{ fontFamily: sans, color: C.ink, background: "linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%)", overflowX: "hidden" }}>
       {/* Fuentes + keyframes globales */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;1,500&display=swap');
@@ -235,11 +237,13 @@ export default function App() {
         @keyframes growBar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
         @keyframes ringPulse { 0% { transform: scale(1); opacity:.7; } 100% { transform: scale(1.5); opacity:0; } }
         a { color: inherit; text-decoration: none; }
-        .btn-primary:hover { background:${C.orangeDeep} !important; transform: translateY(-2px); }
+        .btn-primary { background: ${C.grad} !important; border: none !important; box-shadow: 0 10px 26px -12px rgba(99,102,241,.6); }
+        .btn-primary:hover { filter: brightness(1.08); transform: translateY(-2px); }
         .btn-ghost:hover { border-color:${C.orange} !important; color:${C.orange} !important; }
         .card-hover { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -24px rgba(0,0,0,.25); border-color:${C.orange} !important; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 22px 50px -26px rgba(99,102,241,.45); border-color:${C.orange} !important; }
         .nav-link:hover { color:${C.orange} !important; }
+        .grad-text { background: ${C.grad}; -webkit-background-clip: text; background-clip: text; color: transparent; }
         @media (max-width: 820px){
           .hero-h1 { font-size: 40px !important; }
           .sec-h2 { font-size: 30px !important; }
@@ -352,11 +356,16 @@ export default function App() {
           maxWidth: 1180, margin: "0 auto",
         }}
       >
-        {/* glow sutil de fondo */}
+        {/* glows de fondo (gradient mesh azul/violeta) */}
         <div style={{
-          position: "absolute", top: "0%", right: "-4%", width: 520, height: 520,
-          background: `radial-gradient(circle, ${C.orange}1c, transparent 70%)`,
-          filter: "blur(30px)", zIndex: 0, pointerEvents: "none",
+          position: "absolute", top: "-6%", right: "-4%", width: 540, height: 540,
+          background: `radial-gradient(circle, ${C.orange}24, transparent 70%)`,
+          filter: "blur(36px)", zIndex: 0, pointerEvents: "none",
+        }} />
+        <div style={{
+          position: "absolute", top: "18%", left: "-8%", width: 480, height: 480,
+          background: `radial-gradient(circle, ${C.violet}22, transparent 70%)`,
+          filter: "blur(40px)", zIndex: 0, pointerEvents: "none",
         }} />
         {/* fondo de código escribiéndose (muy sutil, detrás del contenido) */}
         <CodeBackdrop />
@@ -1024,18 +1033,18 @@ export default function App() {
 // ---- Mockup de producto del hero (dashboard CRM + chat) ----
 // PLACEHOLDER: reemplazar por captura real del CRM cuando esté disponible.
 function HeroMockup() {
-  const O = "#d97757";
+  const O = "#6366f1";
   const bars = [62, 78, 45, 88, 70, 95];
   return (
     <div style={{ position: "relative", perspective: 1200 }}>
       {/* ventana principal: dashboard */}
       <div style={{
-        background: "#fff", borderRadius: 18, border: "1px solid #e7e2da",
+        background: "#fff", borderRadius: 18, border: "1px solid #e7e9f2",
         boxShadow: "0 30px 70px -36px rgba(0,0,0,.4)", overflow: "hidden",
         transform: "rotateY(-4deg) rotateX(2deg)", transformStyle: "preserve-3d",
       }}>
         {/* topbar de ventana */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "11px 14px", borderBottom: "1px solid #f0ece4", background: "#faf9f6" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "11px 14px", borderBottom: "1px solid #eef1f8", background: "#f7f8fc" }}>
           <span style={{ width: 10, height: 10, borderRadius: 99, background: "#e06a55" }} />
           <span style={{ width: 10, height: 10, borderRadius: 99, background: "#e8b54a" }} />
           <span style={{ width: 10, height: 10, borderRadius: 99, background: "#5ab06a" }} />
@@ -1046,14 +1055,14 @@ function HeroMockup() {
           {/* KPIs */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
             {[["Conversaciones", "1.284"], ["Resueltas IA", "87%"], ["Leads", "342"]].map(([k, v]) => (
-              <div key={k} style={{ background: "#faf9f6", borderRadius: 10, padding: "10px 12px", border: "1px solid #f0ece4" }}>
+              <div key={k} style={{ background: "#f7f8fc", borderRadius: 10, padding: "10px 12px", border: "1px solid #eef1f8" }}>
                 <div style={{ fontSize: 10, color: "#9a948a", marginBottom: 3 }}>{k}</div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: "#1f1d1a", fontFamily: "Lora, serif" }}>{v}</div>
               </div>
             ))}
           </div>
           {/* gráfico de barras animado */}
-          <div style={{ background: "#faf9f6", borderRadius: 12, padding: "16px 16px 10px", border: "1px solid #f0ece4" }}>
+          <div style={{ background: "#f7f8fc", borderRadius: 12, padding: "16px 16px 10px", border: "1px solid #eef1f8" }}>
             <div style={{ fontSize: 11, color: "#6b655c", marginBottom: 12, fontWeight: 600 }}>Actividad semanal</div>
             <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 84 }}>
               {bars.map((b, i) => (
@@ -1072,7 +1081,7 @@ function HeroMockup() {
       {/* tarjeta flotante: mensaje entrante */}
       <div style={{
         position: "absolute", bottom: -24, left: -22, width: 230,
-        background: "#fff", borderRadius: 14, border: "1px solid #e7e2da",
+        background: "#fff", borderRadius: 14, border: "1px solid #e7e9f2",
         boxShadow: "0 18px 40px -22px rgba(0,0,0,.45)", padding: "12px 14px",
         animation: "float 5s ease-in-out infinite",
       }}>
@@ -1136,9 +1145,9 @@ function CodeBackdrop() {
 
 // ---- Canvas tipo n8n: Trigger -> AI Agent (Chat Model OpenAI + Memory + Tools) -> salidas ----
 function FlowDiagram() {
-  const O = "#d97757";
+  const O = "#6366f1";
   const nodeFill = "#1e1b18";
-  const stroke = "rgba(217,119,87,.42)";
+  const stroke = "rgba(99,102,241,.42)";
   const wire = "rgba(180,170,160,.45)";
   const muted = "#8a847b";
   const F = "Inter, sans-serif";
@@ -1177,7 +1186,7 @@ function FlowDiagram() {
     return (
       <>
         <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="13"
-          fill={hot ? O : nodeFill} stroke={hot ? "#f4c2ac" : stroke} strokeWidth="1.5" />
+          fill={hot ? O : nodeFill} stroke={hot ? "#c7d2fe" : stroke} strokeWidth="1.5" />
         <rect x={n.x + 12} y={cy} width={cs} height={cs} rx="8" fill={hot ? "#fff" : n.accent} />
         {n.logo ? (
           <image
@@ -1299,7 +1308,7 @@ const AGENT_SYSTEM =
   "No inventes precios cerrados: explicá que se cotiza según el alcance.";
 
 function ChatDemo() {
-  const O = "#d97757";
+  const O = "#6366f1";
   const [msgs, setMsgs] = useState(CHAT_SEED);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
@@ -1364,7 +1373,7 @@ function ChatDemo() {
           borderRadius: isBot ? "4px 14px 14px 14px" : "14px 4px 14px 14px",
           background: isBot ? O : "#fff",
           color: isBot ? "#fff" : "#1f1d1a",
-          border: isBot ? "none" : "1px solid #e7e2da",
+          border: isBot ? "none" : "1px solid #e7e9f2",
           boxShadow: "0 2px 8px -4px rgba(0,0,0,.15)",
         }}>
           {msg.text}
@@ -1375,12 +1384,12 @@ function ChatDemo() {
 
   return (
     <div style={{
-      background: "#f3f0ea", borderRadius: 20, border: "1px solid #e7e2da",
+      background: "#f4f6fc", borderRadius: 20, border: "1px solid #e7e9f2",
       overflow: "hidden", boxShadow: "0 24px 50px -28px rgba(0,0,0,.45)",
       maxWidth: 380, margin: "0 auto", width: "100%",
     }}>
       {/* header */}
-      <div style={{ background: "#fff", padding: "13px 16px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid #e7e2da" }}>
+      <div style={{ background: "#fff", padding: "13px 16px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid #e7e9f2" }}>
         <div style={{ width: 34, height: 34, borderRadius: 99, background: O, display: "grid", placeItems: "center", color: "#fff", fontWeight: 700 }}>✦</div>
         <div>
           <div style={{ fontSize: 14, fontWeight: 600, color: "#1f1d1a" }}>Asesor IA · {BRAND}</div>
@@ -1424,7 +1433,7 @@ function ChatDemo() {
         )}
       </div>
       {/* input */}
-      <div style={{ display: "flex", gap: 8, padding: 12, borderTop: "1px solid #e7e2da", background: "#fff" }}>
+      <div style={{ display: "flex", gap: 8, padding: 12, borderTop: "1px solid #e7e9f2", background: "#fff" }}>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -1432,8 +1441,8 @@ function ChatDemo() {
           placeholder="Escribí tu consulta..."
           disabled={typing}
           style={{
-            flex: 1, border: "1px solid #e7e2da", borderRadius: 99, padding: "10px 16px",
-            fontSize: 14, outline: "none", fontFamily: "inherit", background: "#faf9f6",
+            flex: 1, border: "1px solid #e7e9f2", borderRadius: 99, padding: "10px 16px",
+            fontSize: 14, outline: "none", fontFamily: "inherit", background: "#f7f8fc",
           }}
         />
         <button
@@ -1460,7 +1469,7 @@ const FLOAT_SEED = [
 ];
 
 function FloatingChat() {
-  const O = "#d97757";
+  const O = "#6366f1";
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState(FLOAT_SEED);
   const [input, setInput] = useState("");
@@ -1523,7 +1532,7 @@ function FloatingChat() {
           borderRadius: isBot ? "4px 14px 14px 14px" : "14px 4px 14px 14px",
           background: isBot ? O : "#fff",
           color: isBot ? "#fff" : "#1f1d1a",
-          border: isBot ? "none" : "1px solid #e7e2da",
+          border: isBot ? "none" : "1px solid #e7e9f2",
           boxShadow: "0 2px 8px -4px rgba(0,0,0,.15)",
           whiteSpace: "pre-wrap",
         }}>
@@ -1541,12 +1550,12 @@ function FloatingChat() {
           position: "fixed", bottom: 92, right: 22, zIndex: 1001,
           width: "min(370px, 92vw)", height: "min(540px, 72vh)",
           display: "flex", flexDirection: "column",
-          background: "#f3f0ea", borderRadius: 18, border: "1px solid #e7e2da",
+          background: "#f4f6fc", borderRadius: 18, border: "1px solid #e7e9f2",
           overflow: "hidden", boxShadow: "0 28px 60px -24px rgba(0,0,0,.5)",
           animation: "fadeUp .25s ease",
         }}>
           {/* header */}
-          <div style={{ background: "#fff", padding: "13px 16px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid #e7e2da" }}>
+          <div style={{ background: "#fff", padding: "13px 16px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid #e7e9f2" }}>
             <div style={{ width: 36, height: 36, borderRadius: 99, background: O, display: "grid", placeItems: "center", color: "#fff", fontWeight: 700 }}>✦</div>
             <div style={{ lineHeight: 1.2 }}>
               <div style={{ fontSize: 14.5, fontWeight: 700, color: "#1f1d1a" }}>Nexa · Asistente de ventas</div>
@@ -1587,7 +1596,7 @@ function FloatingChat() {
             )}
           </div>
           {/* input */}
-          <div style={{ display: "flex", gap: 8, padding: 12, borderTop: "1px solid #e7e2da", background: "#fff" }}>
+          <div style={{ display: "flex", gap: 8, padding: 12, borderTop: "1px solid #e7e9f2", background: "#fff" }}>
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -1595,8 +1604,8 @@ function FloatingChat() {
               placeholder="Escribí tu mensaje..."
               disabled={typing}
               style={{
-                flex: 1, border: "1px solid #e7e2da", borderRadius: 99, padding: "10px 16px",
-                fontSize: 14, outline: "none", fontFamily: "inherit", background: "#faf9f6",
+                flex: 1, border: "1px solid #e7e9f2", borderRadius: 99, padding: "10px 16px",
+                fontSize: 14, outline: "none", fontFamily: "inherit", background: "#f7f8fc",
               }}
             />
             <button onClick={() => send()} disabled={typing || !input.trim()} aria-label="Enviar"
@@ -1620,7 +1629,7 @@ function FloatingChat() {
           position: "fixed", bottom: 22, right: 22, zIndex: 1001,
           width: 60, height: 60, borderRadius: 99, border: "none", cursor: "pointer",
           background: O, color: "#fff", fontSize: 26, display: "grid", placeItems: "center",
-          boxShadow: "0 14px 30px -10px rgba(217,119,87,.7)",
+          boxShadow: "0 14px 30px -10px rgba(99,102,241,.55)",
           transition: "transform .2s",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.06)")}
@@ -1644,7 +1653,7 @@ const MONTHS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", 
 const pad2 = (n) => String(n).padStart(2, "0");
 
 function BookingCalendar() {
-  const O = "#d97757";
+  const O = "#6366f1";
   const today = new Date(); today.setHours(0, 0, 0, 0);
 
   const [view, setView] = useState({ y: today.getFullYear(), m: today.getMonth() });
