@@ -355,6 +355,7 @@ export default function App() {
           100% { opacity: 0; transform: translate(168px, -26px) rotate(-28deg); }
         }
         .logo-wrap { position: relative; display: flex; align-items: center; gap: 10px; }
+        .hero-flow-mobile { display: none; }
         .shooting-star { position: absolute; left: 0; top: 6px; width: 46px; height: 2px; border-radius: 99px; pointer-events: none; opacity: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.92)); animation: shoot 6s ease-in-out infinite; }
         .shooting-star::after { content: ""; position: absolute; right: -1px; top: -1.5px; width: 5px; height: 5px; border-radius: 99px; background: #fff; box-shadow: 0 0 9px 2px rgba(255,255,255,.85); }
         a { color: inherit; text-decoration: none; }
@@ -381,6 +382,9 @@ export default function App() {
           .hero-pad { padding: 120px 22px 70px !important; }
           .hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .hero-mockup { display: none !important; }
+          .hero-cta { flex-wrap: nowrap !important; gap: 10px !important; }
+          .hero-cta > a { flex: 1; padding: 13px 12px !important; font-size: 14px !important; }
+          .hero-flow-mobile { display: block !important; margin-top: 30px; }
           .pad { padding: 70px 22px !important; }
         }
         @media (max-width: 520px){
@@ -542,23 +546,28 @@ export default function App() {
             </Reveal>
 
             <Reveal delay={0.18}>
-              <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+              <div className="hero-cta" style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
                 <a href="#asesor" className="btn-primary" style={{
                   background: C.orange, color: C.white, padding: "15px 30px",
-                  borderRadius: 12, fontWeight: 600, fontSize: 16,
+                  borderRadius: 12, fontWeight: 600, fontSize: 16, textAlign: "center",
                   transition: "background .2s, transform .2s",
                 }}>
                   {L("Try our AI advisor", "Probá nuestro asesor IA")}
                 </a>
                 <a href="#contacto" className="btn-ghost" style={{
                   border: `1.5px solid ${C.line}`, color: C.inkSoft, padding: "15px 30px",
-                  borderRadius: 12, fontWeight: 600, fontSize: 16,
+                  borderRadius: 12, fontWeight: 600, fontSize: 16, textAlign: "center",
                   transition: "border-color .2s, color .2s",
                 }}>
                   {L("Book a demo", "Agendá una demo")}
                 </a>
               </div>
             </Reveal>
+
+            {/* diagrama del agente n8n: solo en móvil (reemplaza al mockup oculto) */}
+            <div className="hero-flow-mobile">
+              <FlowDiagram />
+            </div>
           </div>
 
           {/* Columna derecha: mockup de producto */}
