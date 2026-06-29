@@ -357,14 +357,6 @@ export default function App() {
         .logo-wrap { position: relative; display: flex; align-items: center; gap: 10px; }
         .shooting-star { position: absolute; left: 0; top: 6px; width: 46px; height: 2px; border-radius: 99px; pointer-events: none; opacity: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.92)); animation: shoot 6s ease-in-out infinite; }
         .shooting-star::after { content: ""; position: absolute; right: -1px; top: -1.5px; width: 5px; height: 5px; border-radius: 99px; background: #fff; box-shadow: 0 0 9px 2px rgba(255,255,255,.85); }
-        @keyframes meteor {
-          0%   { opacity: 0; transform: translate(0, 0) rotate(135deg); }
-          8%   { opacity: 1; }
-          85%  { opacity: 1; }
-          100% { opacity: 0; transform: translate(-320px, 320px) rotate(135deg); }
-        }
-        .meteor { position: absolute; top: -24px; width: 110px; height: 2px; border-radius: 99px; pointer-events: none; opacity: 0; background: linear-gradient(90deg, rgba(255,255,255,.9), transparent); animation: meteor 5.5s linear infinite; }
-        .meteor::after { content: ""; position: absolute; left: -1px; top: -1.5px; width: 5px; height: 5px; border-radius: 99px; background: #fff; box-shadow: 0 0 10px 2px rgba(255,255,255,.7); }
         a { color: inherit; text-decoration: none; }
         .btn-primary { background: ${C.grad} !important; color: #0a0b0e !important; border: none !important; box-shadow: 0 8px 28px -8px rgba(255,255,255,.28); }
         .btn-primary:hover { filter: brightness(1.04); transform: translateY(-2px); }
@@ -512,17 +504,6 @@ export default function App() {
           background: `radial-gradient(circle, ${C.violet}22, transparent 70%)`,
           filter: "blur(40px)", zIndex: 0, pointerEvents: "none",
         }} />
-        {/* lluvia de meteoritos (detrás del contenido) */}
-        {[
-          { left: "16%", delay: "1.4s", dur: "5s" },
-          { left: "42%", delay: "3.6s", dur: "6.2s" },
-          { left: "63%", delay: "0.6s", dur: "5.4s" },
-          { left: "82%", delay: "5.2s", dur: "6.8s" },
-          { left: "94%", delay: "2.4s", dur: "5.8s" },
-        ].map((m, i) => (
-          <span key={i} className="meteor" aria-hidden="true"
-            style={{ left: m.left, animationDelay: m.delay, animationDuration: m.dur }} />
-        ))}
         {/* fondo de código escribiéndose (muy sutil, detrás del contenido) */}
         <CodeBackdrop />
         <div className="hero-grid" style={{
