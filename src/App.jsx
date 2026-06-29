@@ -1327,8 +1327,8 @@ function FlowDiagram() {
   const wire = "rgba(255,255,255,.3)";
   const muted = "#8b909c";
   const F = "Inter, sans-serif";
-  const R = 27;          // radio de los nodos circulares
-  const CY = 270;        // centro vertical de los círculos
+  const R = 24;          // radio de los nodos circulares
+  const CY = 268;        // centro vertical de los círculos
   const TOP = CY - R;    // tope de los círculos
 
   // Robot (icono del AI Agent), blanco con ojos del color del nodo
@@ -1361,16 +1361,18 @@ function FlowDiagram() {
 
   // Sub-nodos circulares (model / memory / tools). port = [x,y] del puerto del agente.
   const subs = [
-    { cx: 80,  kind: "model",  logo: "openai",         label: "OpenAI Chat Model", role: "Model",  port: [248, 140] },
-    { cx: 188, kind: "memory",                          label: "Simple Memory",     role: "Memory", port: [300, 140] },
-    { cx: 318, kind: "tool",   logo: "whatsapp",       label: "Send WhatsApp", sub: "sendMessage", color: "#25d366", port: [352, 158] },
-    { cx: 418, kind: "tool",   logo: "googlecalendar", label: "Calendar",      sub: "createEvent", color: "#4285f4", port: [352, 158] },
-    { cx: 514, kind: "tool",   logo: "supabase",       label: "Update CRM",    sub: "updateRow",   color: "#3ecf8e", port: [352, 158] },
+    { cx: 72,  kind: "model",  logo: "openai",         label: "OpenAI Chat Model", role: "Model",  port: [248, 140] },
+    { cx: 176, kind: "memory",                          label: "Simple Memory",     role: "Memory", port: [300, 140] },
+    { cx: 300, kind: "tool", logo: "whatsapp",       label: "WhatsApp", sub: "sendMessage", color: "#25d366", port: [352, 158] },
+    { cx: 396, kind: "tool", logo: "googlecalendar", label: "Calendar", sub: "createEvent", color: "#4285f4", port: [352, 158] },
+    { cx: 492, kind: "tool", logo: "googlesheets",   label: "Sheets",   sub: "appendRow",   color: "#0f9d58", port: [352, 158] },
+    { cx: 588, kind: "tool", logo: "gmail",          label: "Gmail",    sub: "sendEmail",   color: "#ea4335", port: [352, 158] },
+    { cx: 678, kind: "tool", logo: "supabase",       label: "Supabase", sub: "updateRow",   color: "#3ecf8e", port: [352, 158] },
   ];
   const subLink = (s) => `M ${s.port[0]} ${s.port[1]} C ${s.port[0]} ${TOP - 30}, ${s.cx} ${TOP - 36}, ${s.cx} ${TOP}`;
 
   return (
-    <svg viewBox="0 0 560 352" style={{ width: "100%", maxWidth: 540, display: "block", margin: "0 auto" }}>
+    <svg viewBox="0 0 720 352" style={{ width: "100%", maxWidth: 560, display: "block", margin: "0 auto" }}>
       <defs>
         <radialGradient id="agentGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor={O} stopOpacity="0.45" />
@@ -1381,7 +1383,7 @@ function FlowDiagram() {
       {/* grilla de puntos */}
       <g fill="rgba(255,255,255,.05)">
         {Array.from({ length: 10 }).map((_, r) =>
-          Array.from({ length: 16 }).map((__, c) => (
+          Array.from({ length: 20 }).map((__, c) => (
             <circle key={`${r}-${c}`} cx={10 + c * 36} cy={14 + r * 36} r="1" />
           ))
         )}
@@ -1459,14 +1461,14 @@ function FlowDiagram() {
           )}
           <circle cx={s.cx} cy={CY} r={R} fill={nodeFill} stroke={s.color ? `${s.color}88` : stroke} strokeWidth="1.6" />
           {s.kind === "model" ? (
-            <g transform={`translate(${s.cx - 13}, ${CY - 13}) scale(${26 / 24})`}>
+            <g transform={`translate(${s.cx - 11}, ${CY - 11}) scale(${22 / 24})`}>
               <path d={OPENAI_PATH} fill="#fff" />
             </g>
           ) : s.kind === "memory" ? (
-            <DBIcon cx={s.cx} cy={CY} s={24} />
+            <DBIcon cx={s.cx} cy={CY} s={22} />
           ) : (
             <image href={`https://cdn.simpleicons.org/${s.logo}/${(s.color || "#fff").replace("#", "")}`}
-              x={s.cx - 13} y={CY - 13} width={26} height={26} />
+              x={s.cx - 11} y={CY - 11} width={22} height={22} />
           )}
           <text x={s.cx} y={CY + R + 14} fontSize="9.5" textAnchor="middle" fill="#e8eaf0" fontFamily={F} fontWeight="600">{s.label}</text>
           {s.sub && (
