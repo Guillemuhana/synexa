@@ -695,17 +695,26 @@ export default function App() {
                         <div style={{ fontSize: 13, color: "#cfc9bf", marginTop: 4 }}>{k}</div>
                       </div>
                     ))}
-                    {/* video real del producto (autoplay, silenciado, en loop) */}
+                    {/* video real del producto en marco tipo celular (completo, sin recorte) */}
                     {cs.video ? (
-                      <video
-                        src={cs.video}
-                        autoPlay muted loop playsInline preload="metadata"
-                        style={{
-                          marginTop: 6, width: "100%", borderRadius: 10, display: "block",
-                          aspectRatio: "16 / 9", objectFit: "cover",
-                          border: "1px solid #4a453e", background: "#000",
-                        }}
-                      />
+                      <div style={{ marginTop: 10, display: "flex", justifyContent: "center" }}>
+                        <div style={{
+                          position: "relative", width: 168, maxWidth: "62%",
+                          padding: "12px 8px 14px", background: "#0c0c0c",
+                          borderRadius: 28, border: "1px solid #46403a",
+                          boxShadow: "0 20px 44px -20px rgba(0,0,0,.85)",
+                        }}>
+                          {/* auricular */}
+                          <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", width: 34, height: 4, borderRadius: 99, background: "#2c2926" }} />
+                          <video
+                            src={cs.video}
+                            autoPlay muted loop playsInline preload="metadata"
+                            style={{ width: "100%", height: "auto", display: "block", borderRadius: 18, background: "#000" }}
+                          />
+                          {/* barra inferior */}
+                          <div style={{ position: "absolute", bottom: 6, left: "50%", transform: "translateX(-50%)", width: 46, height: 4, borderRadius: 99, background: "#2c2926" }} />
+                        </div>
+                      </div>
                     ) : (
                       <div style={{ marginTop: 6, fontSize: 11, color: "#7d766c", border: "1px dashed #4a453e", borderRadius: 8, padding: "8px 10px", textAlign: "center" }}>
                         ◳ captura real del producto
