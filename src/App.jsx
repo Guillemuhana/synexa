@@ -66,6 +66,7 @@ const CASES = [
     solution: "Agente de ventas en WhatsApp + CRM con IA que cotiza, califica el lead y agenda solo.",
     metrics: [["87%", "consultas resueltas por IA"], ["24/7", "atención sin cortes"], ["3x", "más leads calificados"]],
     video: "/caso-ninit.mp4",
+    stack: ["n8n", "openai", "whatsapp", "react", "supabase", "vercel"],
   },
   {
     client: "Nuevo Munich",
@@ -74,6 +75,7 @@ const CASES = [
     solution: "CRM a medida con roles por usuario (vendedores, administración y CEO), chat interno del equipo, inbox en tiempo real, toggle bot/humano, follow-ups, reportes con contadores y descarga de PDF.",
     metrics: [["1 panel", "para todo el equipo"], ["-60%", "tiempo de gestión"], ["100%", "pedidos trazables"]],
     video: "/caso-nuevomunich.mp4",
+    stack: ["react", "supabase", "mysql", "n8n", "whatsapp", "github", "vercel"],
   },
 ];
 
@@ -247,6 +249,7 @@ export default function App() {
           .grid-2 { grid-template-columns: 1fr !important; }
           .grid-3 { grid-template-columns: 1fr !important; }
           .case-grid { grid-template-columns: 1fr !important; }
+          .crm-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
           .grid-4 { grid-template-columns: 1fr 1fr !important; }
           .nav-links { display:none !important; }
           .nav-cta { display:none !important; }
@@ -649,6 +652,71 @@ export default function App() {
         </div>
       </section>
 
+      {/* ===== CRM A MEDIDA (captura real, antes de Casos) ===== */}
+      <section data-crm-block className="pad" style={{ padding: "96px 40px", background: C.bg, borderTop: `1px solid ${C.line}` }}>
+        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
+          <Reveal>
+            <div className="crm-grid" style={{
+              display: "grid", gridTemplateColumns: "0.92fr 1.08fr", gap: 48, alignItems: "center",
+            }}>
+              <div>
+                <span style={{
+                  display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600,
+                  letterSpacing: 1.5, textTransform: "uppercase", color: C.orange, marginBottom: 16,
+                }}>
+                  <span style={{ width: 7, height: 7, borderRadius: 99, background: C.orange }} />
+                  Producto propio
+                </span>
+                <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 38, fontWeight: 600, letterSpacing: -0.7, marginBottom: 16, lineHeight: 1.12 }}>
+                  Un CRM a medida para tu empresa
+                </h2>
+                <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6, marginBottom: 26 }}>
+                  El mismo sistema que desarrollamos para nuestros clientes, adaptado a tu operación:
+                  centralizá conversaciones, gestioná tus leads y automatizá la atención desde un solo
+                  lugar, con roles por usuario y métricas en tiempo real.
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 18px" }}>
+                  {["Chats multicanal", "Reportes en tiempo real", "Gestión de leads", "Asignación de agentes", "Automatizaciones", "Flujos inteligentes"].map((f) => (
+                    <div key={f} style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 15, color: C.inkSoft }}>
+                      <span style={{ color: C.orange, fontWeight: 700 }}>✓</span>{f}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* captura del CRM en marco tipo navegador */}
+              <div style={{
+                borderRadius: 14, overflow: "hidden", background: "#15191e",
+                border: `1px solid ${C.line}`, boxShadow: "0 32px 72px -34px rgba(0,0,0,.55)",
+              }}>
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 8, padding: "11px 14px",
+                  background: "#1b2026", borderBottom: "1px solid rgba(255,255,255,.06)",
+                }}>
+                  <span style={{ width: 11, height: 11, borderRadius: 99, background: "#ff5f57" }} />
+                  <span style={{ width: 11, height: 11, borderRadius: 99, background: "#febc2e" }} />
+                  <span style={{ width: 11, height: 11, borderRadius: 99, background: "#28c840" }} />
+                  <span style={{
+                    marginLeft: 10, flex: 1, fontSize: 12, color: "#8a929c",
+                    background: "#0e1216", borderRadius: 7, padding: "5px 12px",
+                    fontFamily: "ui-monospace, Menlo, monospace",
+                  }}>app.synexia.com/crm</span>
+                </div>
+                <img
+                  src="/crm-synexia.png"
+                  alt="CRM a medida de SYNEXA"
+                  style={{ width: "100%", display: "block" }}
+                  onError={(e) => {
+                    const blk = e.currentTarget.closest("[data-crm-block]");
+                    if (blk) blk.style.display = "none";
+                  }}
+                />
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ===== CASOS DETALLADOS ===== */}
       <section id="casos" className="pad" style={{ padding: "100px 40px" }}>
         <div style={{ maxWidth: 1180, margin: "0 auto" }}>
@@ -675,7 +743,7 @@ export default function App() {
                   padding: 0, overflow: "hidden", display: "grid",
                   gridTemplateColumns: "1.4fr 1fr",
                 }} >
-                  <div style={{ padding: "34px 36px" }}>
+                  <div style={{ padding: "34px 36px", display: "flex", flexDirection: "column" }}>
                     <div style={{ fontFamily: serif, fontSize: 26, fontWeight: 600, marginBottom: 4 }}>{cs.client}</div>
                     <div style={{ fontSize: 13, color: C.orange, fontWeight: 600, marginBottom: 22, letterSpacing: 0.3 }}>{cs.sector}</div>
                     <div style={{ marginBottom: 16 }}>
@@ -686,6 +754,24 @@ export default function App() {
                       <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1, color: C.muted, marginBottom: 5, fontWeight: 600 }}>La solución</div>
                       <p style={{ fontSize: 15.5, color: C.inkSoft, lineHeight: 1.55 }}>{cs.solution}</p>
                     </div>
+                    {/* stack de herramientas usadas (rellena el espacio inferior) */}
+                    {cs.stack && (
+                      <div style={{ marginTop: "auto", paddingTop: 30 }}>
+                        <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 1, color: C.muted, fontWeight: 600, marginBottom: 14 }}>
+                          Stack utilizado
+                        </div>
+                        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 20 }}>
+                          {cs.stack.map((s) => (
+                            <img
+                              key={s}
+                              src={`https://cdn.simpleicons.org/${s}/5b636c`}
+                              alt={s} title={s} height="24" loading="lazy"
+                              style={{ height: 24, width: "auto", opacity: 0.92 }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   {/* panel: métricas en fila + demo en celular */}
                   <div style={{ background: C.ink, padding: "32px 28px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 26 }}>
