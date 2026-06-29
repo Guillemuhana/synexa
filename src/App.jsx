@@ -687,32 +687,34 @@ export default function App() {
                       <p style={{ fontSize: 15.5, color: C.inkSoft, lineHeight: 1.55 }}>{cs.solution}</p>
                     </div>
                   </div>
-                  {/* panel de métricas + placeholder imagen */}
-                  <div style={{ background: C.ink, padding: "34px 30px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 22 }}>
-                    {cs.metrics.map(([v, k]) => (
-                      <div key={k}>
-                        <div style={{ fontFamily: serif, fontSize: 34, fontWeight: 600, color: C.orange, lineHeight: 1 }}>{v}</div>
-                        <div style={{ fontSize: 13, color: "#cfc9bf", marginTop: 4 }}>{k}</div>
-                      </div>
-                    ))}
+                  {/* panel: métricas en fila + demo en celular */}
+                  <div style={{ background: C.ink, padding: "32px 28px", display: "flex", flexDirection: "column", justifyContent: "center", gap: 26 }}>
+                    <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
+                      {cs.metrics.map(([v, k]) => (
+                        <div key={k} style={{ minWidth: 84 }}>
+                          <div style={{ fontFamily: serif, fontSize: 30, fontWeight: 600, color: C.orange, lineHeight: 1 }}>{v}</div>
+                          <div style={{ fontSize: 12.5, color: "#cfc9bf", marginTop: 4 }}>{k}</div>
+                        </div>
+                      ))}
+                    </div>
                     {/* video real del producto en marco tipo celular (completo, sin recorte) */}
                     {cs.video ? (
-                      <div style={{ marginTop: 10, display: "flex", justifyContent: "center" }}>
+                      <div style={{ display: "flex", justifyContent: "center" }}>
                         <div style={{
-                          position: "relative", width: 168, maxWidth: "62%",
-                          padding: "12px 8px 14px", background: "#0c0c0c",
-                          borderRadius: 28, border: "1px solid #46403a",
-                          boxShadow: "0 20px 44px -20px rgba(0,0,0,.85)",
+                          position: "relative", width: 210, maxWidth: "82%",
+                          padding: "14px 9px 16px", background: "#0c0c0c",
+                          borderRadius: 34, border: "1px solid #46403a",
+                          boxShadow: "0 24px 52px -22px rgba(0,0,0,.9)",
                         }}>
                           {/* auricular */}
-                          <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", width: 34, height: 4, borderRadius: 99, background: "#2c2926" }} />
+                          <div style={{ position: "absolute", top: 7, left: "50%", transform: "translateX(-50%)", width: 40, height: 4.5, borderRadius: 99, background: "#2c2926" }} />
                           <video
                             src={cs.video}
                             autoPlay muted loop playsInline preload="metadata"
-                            style={{ width: "100%", height: "auto", display: "block", borderRadius: 18, background: "#000" }}
+                            style={{ width: "100%", height: "auto", display: "block", borderRadius: 22, background: "#000" }}
                           />
                           {/* barra inferior */}
-                          <div style={{ position: "absolute", bottom: 6, left: "50%", transform: "translateX(-50%)", width: 46, height: 4, borderRadius: 99, background: "#2c2926" }} />
+                          <div style={{ position: "absolute", bottom: 7, left: "50%", transform: "translateX(-50%)", width: 54, height: 4.5, borderRadius: 99, background: "#2c2926" }} />
                         </div>
                       </div>
                     ) : (
