@@ -30,6 +30,17 @@ const C = {
 const LangCtx = React.createContext({ lang: "en", L: (en) => en, setLang: () => {} });
 const useLang = () => useContext(LangCtx);
 
+// Logo de OpenAI embebido (el CDN externo lo renderiza deformado) — path oficial 24x24.
+const OPENAI_PATH = "M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.1419.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z";
+
+function OpenAIMark({ size = 22, color = "currentColor" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-label="OpenAI" style={{ display: "block" }}>
+      <path d={OPENAI_PATH} />
+    </svg>
+  );
+}
+
 // ---- Datos ----
 const getClients = (L) => [
   { name: "NINIT Group", tag: "Restroom trailers · Miami, Florida, USA" },
@@ -696,18 +707,19 @@ export default function App() {
               letterSpacing: 1.5, textTransform: "uppercase", color: C.orange, marginBottom: 18,
             }}>
               <span style={{ width: 7, height: 7, borderRadius: 99, background: C.orange }} />
-              No solo agentes
+              {L("Not just agents", "No solo agentes")}
             </span>
           </Reveal>
           <Reveal delay={0.05}>
             <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 42, fontWeight: 600, letterSpacing: -0.8, marginBottom: 16, maxWidth: 640 }}>
-              También desarrollamos apps a medida
+              {L("We also build custom apps", "También desarrollamos apps a medida")}
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
             <p style={{ fontSize: 18, color: C.muted, lineHeight: 1.6, maxWidth: 680, marginBottom: 56 }}>
-              Diseñamos y construimos el software completo que tu negocio necesita: del primer
-              boceto al deploy en producción, con la IA integrada donde suma.
+              {L(
+                "We design and build the complete software your business needs: from the first sketch to production deploy, with AI integrated where it adds value.",
+                "Diseñamos y construimos el software completo que tu negocio necesita: del primer boceto al deploy en producción, con la IA integrada donde suma.")}
             </p>
           </Reveal>
 
@@ -740,7 +752,7 @@ export default function App() {
         <div style={{ maxWidth: 1180, margin: "0 auto", textAlign: "center" }}>
           <Reveal>
             <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 34, fontWeight: 600, letterSpacing: -0.5, marginBottom: 38 }}>
-              Tecnología que utilizamos
+              {L("Technology we use", "Tecnología que utilizamos")}
             </h2>
           </Reveal>
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 14 }}>
@@ -771,19 +783,18 @@ export default function App() {
                   letterSpacing: 1.5, textTransform: "uppercase", color: C.orange, marginBottom: 16,
                 }}>
                   <span style={{ width: 7, height: 7, borderRadius: 99, background: C.orange }} />
-                  Producto propio
+                  {L("Our own product", "Producto propio")}
                 </span>
                 <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 38, fontWeight: 600, letterSpacing: -0.7, marginBottom: 16, lineHeight: 1.12 }}>
-                  Un CRM a medida para tu empresa
+                  {L("A custom CRM for your company", "Un CRM a medida para tu empresa")}
                 </h2>
                 <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6, marginBottom: 26 }}>
-                  El mismo sistema que desarrollamos para nuestros clientes, adaptado a tu operación:
-                  centralizá conversaciones, gestioná tus leads y automatizá la atención desde un solo
-                  lugar. Y lo más importante: cada CRM incluye un <b style={{ color: C.ink }}>asistente
-                  de IA a medida</b>, entrenado para tu empresa o negocio, que atiende y vende por vos.
+                  {L(
+                    <>The same system we build for our clients, adapted to your operation: centralize conversations, manage your leads and automate support from one place. And most importantly: every CRM includes a <b style={{ color: C.ink }}>custom AI assistant</b>, trained for your company or business, that handles and sells for you.</>,
+                    <>El mismo sistema que desarrollamos para nuestros clientes, adaptado a tu operación: centralizá conversaciones, gestioná tus leads y automatizá la atención desde un solo lugar. Y lo más importante: cada CRM incluye un <b style={{ color: C.ink }}>asistente de IA a medida</b>, entrenado para tu empresa o negocio, que atiende y vende por vos.</>)}
                 </p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 18px" }}>
-                  {["Asistente de IA a medida", "Entrenado con tus datos", "Chats multicanal", "Reportes en tiempo real", "Gestión de leads", "Asignación de agentes", "Automatizaciones", "Flujos inteligentes"].map((f) => (
+                  {[L("Custom AI assistant", "Asistente de IA a medida"), L("Trained on your data", "Entrenado con tus datos"), L("Multichannel chats", "Chats multicanal"), L("Real-time reports", "Reportes en tiempo real"), L("Lead management", "Gestión de leads"), L("Agent assignment", "Asignación de agentes"), L("Automations", "Automatizaciones"), L("Smart flows", "Flujos inteligentes")].map((f) => (
                     <div key={f} style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 15, color: C.inkSoft }}>
                       <span style={{ color: C.orange, fontWeight: 700 }}>✓</span>{f}
                     </div>
@@ -833,12 +844,12 @@ export default function App() {
               letterSpacing: 1.5, textTransform: "uppercase", color: C.orange, marginBottom: 18,
             }}>
               <span style={{ width: 7, height: 7, borderRadius: 99, background: C.orange }} />
-              Casos de éxito
+              {L("Success stories", "Casos de éxito")}
             </span>
           </Reveal>
           <Reveal delay={0.05}>
             <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 42, fontWeight: 600, letterSpacing: -0.8, marginBottom: 54, maxWidth: 620 }}>
-              Resultados reales en producción
+              {L("Real results in production", "Resultados reales en producción")}
             </h2>
           </Reveal>
 
@@ -854,27 +865,33 @@ export default function App() {
                     <div style={{ fontFamily: serif, fontSize: 26, fontWeight: 600, marginBottom: 4 }}>{cs.client}</div>
                     <div style={{ fontSize: 13, color: C.orange, fontWeight: 600, marginBottom: 22, letterSpacing: 0.3 }}>{cs.sector}</div>
                     <div style={{ marginBottom: 16 }}>
-                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1, color: C.muted, marginBottom: 5, fontWeight: 600 }}>El problema</div>
+                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1, color: C.muted, marginBottom: 5, fontWeight: 600 }}>{L("The problem", "El problema")}</div>
                       <p style={{ fontSize: 15.5, color: C.inkSoft, lineHeight: 1.55 }}>{cs.problem}</p>
                     </div>
                     <div>
-                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1, color: C.muted, marginBottom: 5, fontWeight: 600 }}>La solución</div>
+                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1, color: C.muted, marginBottom: 5, fontWeight: 600 }}>{L("The solution", "La solución")}</div>
                       <p style={{ fontSize: 15.5, color: C.inkSoft, lineHeight: 1.55 }}>{cs.solution}</p>
                     </div>
                     {/* stack de herramientas usadas (rellena el espacio inferior) */}
                     {cs.stack && (
                       <div style={{ marginTop: "auto", paddingTop: 30 }}>
                         <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: 1, color: C.muted, fontWeight: 600, marginBottom: 14 }}>
-                          Stack utilizado
+                          {L("Stack used", "Stack utilizado")}
                         </div>
                         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 20 }}>
                           {cs.stack.map((s) => (
-                            <img
-                              key={s}
-                              src={`https://cdn.simpleicons.org/${s}/5b636c`}
-                              alt={s} title={s} height="24" loading="lazy"
-                              style={{ height: 24, width: "auto", opacity: 0.92 }}
-                            />
+                            s === "openai" ? (
+                              <span key={s} title="OpenAI" style={{ color: "#c4c8d2", opacity: 0.92, display: "block" }}>
+                                <OpenAIMark size={23} />
+                              </span>
+                            ) : (
+                              <img
+                                key={s}
+                                src={`https://cdn.simpleicons.org/${s}/c4c8d2`}
+                                alt={s} title={s} height="24" loading="lazy"
+                                style={{ height: 24, width: "auto", opacity: 0.92 }}
+                              />
+                            )
                           ))}
                         </div>
                       </div>
@@ -912,7 +929,7 @@ export default function App() {
                       </div>
                     ) : (
                       <div style={{ marginTop: 6, fontSize: 11, color: "#7d766c", border: "1px dashed #4a453e", borderRadius: 8, padding: "8px 10px", textAlign: "center" }}>
-                        ◳ captura real del producto
+                        {L("◳ real product screenshot", "◳ captura real del producto")}
                       </div>
                     )}
                   </div>
@@ -928,7 +945,7 @@ export default function App() {
         <div style={{ maxWidth: 1180, margin: "0 auto" }}>
           <Reveal>
             <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 36, fontWeight: 600, letterSpacing: -0.6, marginBottom: 44, textAlign: "center" }}>
-              Lo que dicen nuestros clientes
+              {L("What our clients say", "Lo que dicen nuestros clientes")}
             </h2>
           </Reveal>
           <div className="grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
@@ -963,12 +980,12 @@ export default function App() {
         <div style={{ maxWidth: 1180, margin: "0 auto" }}>
           <Reveal>
             <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 42, fontWeight: 600, letterSpacing: -0.8, marginBottom: 14, textAlign: "center" }}>
-              Planes que se adaptan a tu negocio
+              {L("Plans that fit your business", "Planes que se adaptan a tu negocio")}
             </h2>
           </Reveal>
           <Reveal delay={0.05}>
             <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6, marginBottom: 54, textAlign: "center", maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
-              Cada proyecto se cotiza según el alcance. Estos son los puntos de partida más comunes.
+              {L("Every project is quoted by scope. These are the most common starting points.", "Cada proyecto se cotiza según el alcance. Estos son los puntos de partida más comunes.")}
             </p>
           </Reveal>
 
@@ -976,24 +993,24 @@ export default function App() {
             {PRICING.map((p, i) => (
               <Reveal key={p.name} delay={i * 0.08}>
                 <div className="card-hover" style={{
-                  background: p.highlight ? C.ink : C.white,
-                  border: p.highlight ? `1px solid ${C.ink}` : `1px solid ${C.line}`,
+                  background: p.highlight ? "#161922" : C.card,
+                  border: p.highlight ? "1px solid rgba(255,255,255,.2)" : `1px solid ${C.line}`,
                   borderRadius: 20, padding: "34px 30px", height: "100%",
                   display: "flex", flexDirection: "column",
                   position: "relative",
-                  boxShadow: p.highlight ? "0 26px 56px -30px rgba(0,0,0,.5)" : "none",
+                  boxShadow: p.highlight ? "0 26px 56px -30px rgba(0,0,0,.7)" : "none",
                 }}>
                   {p.highlight && (
                     <span style={{
                       position: "absolute", top: 18, right: 18, fontSize: 11, fontWeight: 700,
-                      color: "#fff", background: C.orange, padding: "4px 11px", borderRadius: 99,
+                      color: "#0a0b0e", background: C.orange, padding: "4px 11px", borderRadius: 99,
                       letterSpacing: 0.5,
                     }}>POPULAR</span>
                   )}
-                  <div style={{ fontFamily: serif, fontSize: 26, fontWeight: 600, marginBottom: 6, color: p.highlight ? "#fff" : C.ink }}>
+                  <div style={{ fontFamily: serif, fontSize: 26, fontWeight: 600, marginBottom: 6, color: C.ink }}>
                     {p.name}
                   </div>
-                  <div style={{ fontSize: 14, color: p.highlight ? "#cfc9bf" : C.muted, marginBottom: 24 }}>
+                  <div style={{ fontSize: 14, color: C.muted, marginBottom: 24 }}>
                     {p.tagline}
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 11, marginBottom: 28, flex: 1 }}>
@@ -1008,11 +1025,11 @@ export default function App() {
                     display: "block", textAlign: "center", padding: "13px",
                     borderRadius: 11, fontWeight: 600, fontSize: 15,
                     background: p.highlight ? C.orange : "transparent",
-                    color: p.highlight ? "#fff" : C.ink,
+                    color: p.highlight ? "#0a0b0e" : C.ink,
                     border: p.highlight ? "none" : `1.5px solid ${C.line}`,
                     transition: "all .2s",
                   }}>
-                    Pedir cotización
+                    {L("Request a quote", "Pedir cotización")}
                   </a>
                 </div>
               </Reveal>
@@ -1026,13 +1043,14 @@ export default function App() {
         <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
           <Reveal>
             <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 44, fontWeight: 600, letterSpacing: -1, marginBottom: 18 }}>
-              ¿Querés ver cómo un agente de IA puede ayudarte?
+              {L("Want to see how an AI agent can help you?", "¿Querés ver cómo un agente de IA puede ayudarte?")}
             </h2>
           </Reveal>
           <Reveal delay={0.06}>
             <p style={{ fontSize: 19, color: C.muted, lineHeight: 1.6, marginBottom: 38 }}>
-              Agendá una demo o pedí una reunión y exploramos juntos la solución que mejor
-              se adapta a tu empresa.
+              {L(
+                "Book a demo or request a meeting and we'll explore the solution that best fits your company together.",
+                "Agendá una demo o pedí una reunión y exploramos juntos la solución que mejor se adapta a tu empresa.")}
             </p>
           </Reveal>
           <Reveal delay={0.12}>
@@ -1042,7 +1060,7 @@ export default function App() {
                 padding: "17px 40px", borderRadius: 12, fontWeight: 600, fontSize: 17,
                 transition: "background .2s, transform .2s",
               }}>
-                Agendá tu reunión
+                {L("Book your meeting", "Agendá tu reunión")}
               </a>
               <button
                 onClick={() => window.dispatchEvent(new Event("open-nexa-chat"))}
@@ -1052,7 +1070,7 @@ export default function App() {
                   padding: "17px 40px", borderRadius: 12, fontWeight: 600, fontSize: 17, cursor: "pointer",
                   fontFamily: "inherit", transition: "border-color .2s, color .2s",
                 }}>
-                Hablá con la asistente IA
+                {L("Chat with the AI assistant", "Hablá con la asistente IA")}
               </button>
             </div>
           </Reveal>
@@ -1064,13 +1082,14 @@ export default function App() {
         <div style={{ maxWidth: 1180, margin: "0 auto" }}>
           <Reveal>
             <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 38, fontWeight: 600, letterSpacing: -0.7, marginBottom: 12, textAlign: "center" }}>
-              Agendá tu llamada o reunión
+              {L("Book your call or meeting", "Agendá tu llamada o reunión")}
             </h2>
           </Reveal>
           <Reveal delay={0.05}>
             <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6, marginBottom: 40, textAlign: "center", maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
-              Elegí el día y horario que mejor te quede. Coordinamos una reunión corta para
-              entender tu caso y mostrarte cómo te podemos ayudar.
+              {L(
+                "Pick the day and time that works best for you. We'll set up a short meeting to understand your case and show you how we can help.",
+                "Elegí el día y horario que mejor te quede. Coordinamos una reunión corta para entender tu caso y mostrarte cómo te podemos ayudar.")}
             </p>
           </Reveal>
           <Reveal delay={0.1}>
@@ -1088,24 +1107,24 @@ export default function App() {
               letterSpacing: 1.5, textTransform: "uppercase", color: C.orange, marginBottom: 16,
             }}>
               <span style={{ width: 7, height: 7, borderRadius: 99, background: C.orange }} />
-              Nuestro equipo
+              {L("Our team", "Nuestro equipo")}
             </span>
           </Reveal>
           <Reveal delay={0.05}>
             <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 34, fontWeight: 600, letterSpacing: -0.6, marginBottom: 16 }}>
-              Desarrollo de la mano de programadores senior
+              {L("Built by senior developers", "Desarrollo de la mano de programadores senior")}
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
             <p style={{ fontSize: 18, color: C.muted, lineHeight: 1.65, marginBottom: 34 }}>
-              Nuestro equipo cuenta con <b style={{ color: C.ink }}>programadores senior con más de 10 años
-              de experiencia</b> construyendo software real en producción. Cada proyecto se desarrolla con
-              estándares profesionales, código mantenible y acompañamiento de punta a punta.
+              {L(
+                <>Our team has <b style={{ color: C.ink }}>senior developers with over 10 years of experience</b> building real software in production. Every project is developed with professional standards, maintainable code and end-to-end support.</>,
+                <>Nuestro equipo cuenta con <b style={{ color: C.ink }}>programadores senior con más de 10 años de experiencia</b> construyendo software real en producción. Cada proyecto se desarrolla con estándares profesionales, código mantenible y acompañamiento de punta a punta.</>)}
             </p>
           </Reveal>
           <Reveal delay={0.14}>
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 40 }}>
-              {[["+10", "años de experiencia"], ["Senior", "desarrolladores"], ["100%", "a medida"]].map(([v, k]) => (
+              {[["+10", L("years of experience", "años de experiencia")], ["Senior", L("developers", "desarrolladores")], ["100%", L("tailor-made", "a medida")]].map(([v, k]) => (
                 <div key={k}>
                   <div style={{ fontFamily: serif, fontSize: 38, fontWeight: 600, color: C.orange, lineHeight: 1 }}>{v}</div>
                   <div style={{ fontSize: 14, color: C.muted, marginTop: 6 }}>{k}</div>
@@ -1247,67 +1266,79 @@ function CodeBackdrop() {
 // ---- Canvas tipo n8n: Trigger -> AI Agent (Chat Model OpenAI + Memory + Tools) -> salidas ----
 function FlowDiagram() {
   const O = "#6366f1";
-  const nodeFill = "#1e1b18";
-  const stroke = "rgba(99,102,241,.42)";
-  const wire = "rgba(180,170,160,.45)";
-  const muted = "#8a847b";
+  const nodeFill = "#11141b";
+  const stroke = "rgba(255,255,255,.16)";
+  const wire = "rgba(255,255,255,.28)";
+  const muted = "#8b909c";
   const F = "Inter, sans-serif";
 
-  // Flujo principal (izquierda -> derecha). Centros alineados en y=115.
+  // Flujo principal (izquierda -> derecha). Centro del Agent en y=120.
   const flow = [
-    { x: 8,   y: 88,  w: 122, h: 54, label: "WhatsApp",  sub: "Trigger",     icon: "▸", accent: "#25d366", logo: "whatsapp" },
-    { x: 192, y: 78,  w: 140, h: 74, label: "AI Agent",  sub: "Tools Agent", icon: "✦", accent: O, hot: true },
-    { x: 386, y: 71,  w: 90,  h: 48, label: "Responder", sub: "WhatsApp",    icon: "↺", accent: "#25d366" },
-    { x: 386, y: 129, w: 90,  h: 48, label: "CRM",       sub: "Supabase",    icon: "▦", accent: "#3ecf8e" },
+    { x: 12,  y: 92,  w: 140, h: 56, label: "WhatsApp", sub: "Trigger",     accent: "#25d366", logo: "whatsapp" },
+    { x: 212, y: 80,  w: 152, h: 80, label: "AI Agent", sub: "Tools Agent", icon: "✦", accent: O, hot: true },
+    { x: 416, y: 86,  w: 116, h: 52, label: "Respond",  sub: "WhatsApp",    accent: "#25d366", logo: "whatsapp" },
+    { x: 416, y: 150, w: 116, h: 52, label: "CRM",      sub: "Supabase",    accent: "#3ecf8e", logo: "supabase" },
   ];
 
-  // Sub-nodos que cuelgan del AI Agent (puertos reales de n8n), alineados en y=250.
+  // Sub-nodos colgando del AI Agent (puertos reales de n8n), alineados en y=292.
   const sub = [
-    { x: 38,  y: 250, w: 130, h: 56, role: "Chat Model", label: "OpenAI",   sub: "gpt-4o",   icon: "✶", accent: "#10a37f", port: 228, cx: 103, logo: "openai" },
-    { x: 198, y: 250, w: 126, h: 56, role: "Memory",     label: "Memoria",  sub: "Postgres", icon: "◈", accent: "#8b6fd6", port: 262, cx: 261 },
-    { x: 350, y: 250, w: 126, h: 56, role: "Tool",       label: "Calendar", sub: "Google",   icon: "▦", accent: "#4a90d9", port: 296, cx: 413 },
+    { x: 8,   y: 292, w: 100, h: 58, label: "OpenAI",   sub: "gpt-4o",   accent: "#10a37f", logo: "openai",         port: 250, cx: 58 },
+    { x: 116, y: 292, w: 100, h: 58, label: "Postgres", sub: "Memory",   accent: "#336791", logo: "postgresql",     port: 288, cx: 166 },
+    { x: 224, y: 292, w: 100, h: 58, label: "Calendar", sub: "Google",   accent: "#4285f4", logo: "googlecalendar", port: 326, cx: 274 },
+    { x: 332, y: 292, w: 100, h: 58, label: "Sheets",   sub: "Google",   accent: "#0f9d58", logo: "googlesheets",   port: 326, cx: 382 },
+    { x: 440, y: 292, w: 100, h: 58, label: "Supabase", sub: "Database", accent: "#3ecf8e", logo: "supabase",       port: 326, cx: 490 },
+  ];
+
+  const roles = [
+    { label: "CHAT MODEL", x: 58 },
+    { label: "MEMORY", x: 166 },
+    { label: "TOOL", x: 382 },
   ];
 
   // Enlaces del flujo principal
   const links = [
-    "M 130 115 C 161 115, 161 115, 192 115",          // WhatsApp -> Agent
-    "M 332 115 C 359 115, 359 95,  386 95",           // Agent -> Responder
-    "M 332 115 C 359 115, 359 153, 386 153",          // Agent -> CRM
+    "M 152 120 C 184 120, 184 120, 212 120",     // WhatsApp -> Agent
+    "M 364 120 C 392 120, 392 112, 416 112",     // Agent -> Respond
+    "M 364 120 C 392 120, 392 176, 416 176",     // Agent -> CRM
   ];
 
-  // Puerto inferior del Agent (y=152) -> top del sub-nodo (y=250)
-  const subLinks = sub.map((n) => `M ${n.port} 152 C ${n.port} 205, ${n.cx} 200, ${n.cx} 250`);
+  // Puerto inferior del Agent (y=160) -> top del sub-nodo (y=292)
+  const subLinks = sub.map((n) => `M ${n.port} 160 C ${n.port} 224, ${n.cx} 234, ${n.cx} 292`);
 
   // chip de icono + textos de un nodo (estilo n8n)
   const Node = ({ n, hot }) => {
-    const cs = hot ? 32 : 26;
+    const cs = hot ? 34 : 24;
     const cy = n.y + (n.h - cs) / 2;
     const mid = n.y + n.h / 2;
-    const tx = n.x + 12 + cs + 11;
+    const tx = n.x + 10 + cs + 9;
     return (
       <>
         <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="13"
           fill={hot ? O : nodeFill} stroke={hot ? "#c7d2fe" : stroke} strokeWidth="1.5" />
-        <rect x={n.x + 12} y={cy} width={cs} height={cs} rx="8" fill={hot ? "#fff" : n.accent} />
-        {n.logo ? (
+        <rect x={n.x + 10} y={cy} width={cs} height={cs} rx="7" fill={hot ? "#fff" : n.accent} />
+        {n.logo === "openai" ? (
+          <g transform={`translate(${n.x + 10 + cs * 0.2}, ${cy + cs * 0.2}) scale(${(cs * 0.6) / 24})`}>
+            <path d={OPENAI_PATH} fill="#fff" />
+          </g>
+        ) : n.logo ? (
           <image
             href={`https://cdn.simpleicons.org/${n.logo}/ffffff`}
-            x={n.x + 12 + cs * 0.19} y={cy + cs * 0.19}
-            width={cs * 0.62} height={cs * 0.62}
+            x={n.x + 10 + cs * 0.2} y={cy + cs * 0.2}
+            width={cs * 0.6} height={cs * 0.6}
           />
         ) : (
-          <text x={n.x + 12 + cs / 2} y={cy + cs / 2 + (hot ? 6 : 5)} fontSize={hot ? "17" : "14"}
+          <text x={n.x + 10 + cs / 2} y={cy + cs / 2 + (hot ? 6 : 5)} fontSize={hot ? "18" : "14"}
             textAnchor="middle" fill={hot ? O : "#fff"}>{n.icon}</text>
         )}
-        <text x={tx} y={mid - 3} fontSize={hot ? "15" : "13"} fill="#fff" fontFamily={F} fontWeight="700">{n.label}</text>
-        <text x={tx} y={mid + 12} fontSize="10" fontFamily={F} fontWeight="500"
+        <text x={tx} y={mid - 3} fontSize={hot ? "15" : "12.5"} fill="#fff" fontFamily={F} fontWeight="700">{n.label}</text>
+        <text x={tx} y={mid + 12} fontSize={hot ? "10.5" : "9.5"} fontFamily={F} fontWeight="500"
           fill={hot ? "rgba(255,255,255,.82)" : muted}>{n.sub}</text>
       </>
     );
   };
 
   return (
-    <svg viewBox="0 0 484 330" style={{ width: "100%", maxWidth: 500, display: "block", margin: "0 auto" }}>
+    <svg viewBox="0 0 548 384" style={{ width: "100%", maxWidth: 520, display: "block", margin: "0 auto" }}>
       <defs>
         <radialGradient id="agentGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor={O} stopOpacity="0.5" />
@@ -1317,9 +1348,9 @@ function FlowDiagram() {
 
       {/* grilla de puntos de fondo */}
       <g fill="rgba(255,255,255,.05)">
-        {Array.from({ length: 10 }).map((_, r) =>
-          Array.from({ length: 14 }).map((__, c) => (
-            <circle key={`${r}-${c}`} cx={12 + c * 36} cy={14 + r * 36} r="1" />
+        {Array.from({ length: 11 }).map((_, r) =>
+          Array.from({ length: 16 }).map((__, c) => (
+            <circle key={`${r}-${c}`} cx={10 + c * 36} cy={14 + r * 36} r="1" />
           ))
         )}
       </g>
@@ -1345,25 +1376,27 @@ function FlowDiagram() {
       </g>
 
       {/* puntos de puerto (conectores estilo n8n) */}
-      <g fill="#2a2724" stroke={stroke} strokeWidth="1.2">
-        <circle cx="130" cy="115" r="3.4" />
-        <circle cx="192" cy="115" r="3.4" />
-        <circle cx="332" cy="115" r="3.4" />
-        <circle cx="386" cy="95" r="3.4" />
-        <circle cx="386" cy="153" r="3.4" />
-        {sub.map((n, i) => <circle key={`p-${i}`} cx={n.port} cy="152" r="3.2" />)}
-        {sub.map((n, i) => <circle key={`pt-${i}`} cx={n.cx} cy="250" r="3.2" />)}
+      <g fill="#11141b" stroke={stroke} strokeWidth="1.2">
+        <circle cx="152" cy="120" r="3.4" />
+        <circle cx="212" cy="120" r="3.4" />
+        <circle cx="364" cy="120" r="3.4" />
+        <circle cx="416" cy="112" r="3.4" />
+        <circle cx="416" cy="176" r="3.4" />
+        <circle cx="250" cy="160" r="3.2" />
+        <circle cx="288" cy="160" r="3.2" />
+        <circle cx="326" cy="160" r="3.2" />
+        {sub.map((n, i) => <circle key={`pt-${i}`} cx={n.cx} cy="292" r="3.2" />)}
       </g>
 
       {/* etiquetas de rol bajo el Agent (Chat Model / Memory / Tool) */}
-      {sub.map((n, i) => (
-        <text key={`role-${i}`} x={n.cx} y={238} fontSize="8.5" textAnchor="middle"
-          fill={muted} fontFamily={F} fontWeight="700" letterSpacing="0.7">{n.role.toUpperCase()}</text>
+      {roles.map((r, i) => (
+        <text key={`role-${i}`} x={r.x} y={280} fontSize="8.5" textAnchor="middle"
+          fill={muted} fontFamily={F} fontWeight="700" letterSpacing="0.7">{r.label}</text>
       ))}
 
-      {/* sub-nodos: modelo (OpenAI), memoria, herramienta */}
+      {/* sub-nodos: modelo, memoria, herramientas */}
       {sub.map((n, i) => (
-        <g key={`sub-${i}`} style={{ animation: "float 5s ease-in-out infinite", animationDelay: `${i * 0.5}s` }}>
+        <g key={`sub-${i}`} style={{ animation: "float 5s ease-in-out infinite", animationDelay: `${i * 0.4}s` }}>
           <Node n={n} hot={false} />
         </g>
       ))}
@@ -1372,14 +1405,14 @@ function FlowDiagram() {
       {flow.map((n, i) => (
         <g key={`flow-n-${i}`}>
           {n.hot && (
-            <circle cx={n.x + n.w / 2} cy={n.y + n.h / 2} r="58" fill="url(#agentGlow)"
+            <circle cx={n.x + n.w / 2} cy={n.y + n.h / 2} r="62" fill="url(#agentGlow)"
               style={{ animation: "pulse 2.4s ease-in-out infinite" }} />
           )}
           <Node n={n} hot={!!n.hot} />
           {n.hot && (
             <g fill="#fff">
               {[0, 1, 2].map((d) => (
-                <circle key={d} cx={n.x + n.w / 2 - 9 + d * 9} cy={n.y + n.h - 12} r="2.4"
+                <circle key={d} cx={n.x + n.w / 2 - 9 + d * 9} cy={n.y + n.h - 13} r="2.4"
                   style={{ animation: "pulse 1.2s ease-in-out infinite", animationDelay: `${d * 0.2}s` }} />
               ))}
             </g>
@@ -1411,7 +1444,9 @@ const AGENT_SYSTEM =
 function ChatDemo() {
   const { L } = useLang();
   const O = "#6366f1";
-  const [msgs, setMsgs] = useState(CHAT_SEED);
+  const [msgs, setMsgs] = useState(() => [{ from: "bot", text: L(
+    `Hi! I'm the AI advisor at ${BRAND}. Tell me what your business does and I'll guide you step by step to the AI solution that fits you best 👇`,
+    `¡Hola! Soy el asesor IA de ${BRAND}. Contame qué hace tu negocio y te guío paso a paso hacia la solución de IA que mejor te conviene 👇`) }]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [err, setErr] = useState(false);
@@ -1419,9 +1454,9 @@ function ChatDemo() {
 
   // Sugerencias rápidas para arrancar la conversación
   const quickReplies = [
-    "Tengo un local y quiero atender por WhatsApp",
-    "Quiero automatizar tareas repetitivas",
-    "Necesito un CRM para mi equipo",
+    L("I have a shop and want to handle WhatsApp", "Tengo un local y quiero atender por WhatsApp"),
+    L("I want to automate repetitive tasks", "Quiero automatizar tareas repetitivas"),
+    L("I need a CRM for my team", "Necesito un CRM para mi equipo"),
   ];
 
   useEffect(() => {
@@ -1452,13 +1487,15 @@ function ChatDemo() {
       const data = await res.json();
       const reply = (data.reply || "").trim();
       setTyping(false);
-      setMsgs((m) => [...m, { from: "bot", text: reply || "Disculpá, no te entendí. ¿Me lo repetís?" }]);
+      setMsgs((m) => [...m, { from: "bot", text: reply || L("Sorry, I didn't catch that. Could you say it again?", "Disculpá, no te entendí. ¿Me lo repetís?") }]);
     } catch (e) {
       setTyping(false);
       setErr(true);
       setMsgs((m) => [...m, {
         from: "bot",
-        text: "Se me complicó conectarme recién. Probá de nuevo en un momento, o dejame tu nombre y un email/teléfono y el equipo te contacta.",
+        text: L(
+          "I had trouble connecting just now. Please try again in a moment, or leave me your name and an email/phone and the team will reach out.",
+          "Se me complicó conectarme recién. Probá de nuevo en un momento, o dejame tu nombre y un email/teléfono y el equipo te contacta."),
       }]);
     }
   };
@@ -1496,11 +1533,11 @@ function ChatDemo() {
         <div>
           <div style={{ fontSize: 14, fontWeight: 600, color: "#f4f5f7" }}>{L("AI advisor", "Asesor IA")} · {BRAND}</div>
           <div style={{ fontSize: 11, color: "#22a06b", display: "flex", alignItems: "center", gap: 5 }}>
-            <span style={{ width: 6, height: 6, borderRadius: 99, background: "#22a06b" }} /> en línea
+            <span style={{ width: 6, height: 6, borderRadius: 99, background: "#22a06b" }} /> {L("online", "en línea")}
           </div>
         </div>
         <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 600, color: O, background: `${O}18`, padding: "4px 9px", borderRadius: 99 }}>
-          IA real
+          {L("Real AI", "IA real")}
         </span>
       </div>
       {/* cuerpo */}
@@ -1540,7 +1577,7 @@ function ChatDemo() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter") send(); }}
-          placeholder="Escribí tu consulta..."
+          placeholder={L("Type your question...", "Escribí tu consulta...")}
           disabled={typing}
           style={{
             flex: 1, border: "1px solid #23262e", borderRadius: 99, padding: "10px 16px",
@@ -1574,15 +1611,17 @@ function FloatingChat() {
   const { L } = useLang();
   const O = "#6366f1";
   const [open, setOpen] = useState(false);
-  const [msgs, setMsgs] = useState(FLOAT_SEED);
+  const [msgs, setMsgs] = useState(() => [{ role: "assistant", content: L(
+    `Hi! 👋 I'm the sales assistant at ${BRAND}. I help with AI agents and custom software, and we can set up a call if you'd like. What does your business do?`,
+    `¡Hola! 👋 Soy el asistente de ventas de ${BRAND}. Te ayudo con agentes de IA y software a medida, y coordinamos una llamada si querés. ¿Qué hace tu negocio?`) }]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const boxRef = useRef(null);
 
   const quick = [
-    "Quiero un agente de ventas por WhatsApp",
-    "Necesito un CRM o software a medida",
-    "Quiero agendar una llamada",
+    L("I want a WhatsApp sales agent", "Quiero un agente de ventas por WhatsApp"),
+    L("I need a CRM or custom software", "Necesito un CRM o software a medida"),
+    L("I want to book a call", "Quiero agendar una llamada"),
   ];
 
   useEffect(() => {
@@ -1613,12 +1652,14 @@ function FloatingChat() {
       const data = await res.json();
       const reply = (data.reply || "").trim();
       setTyping(false);
-      setMsgs((m) => [...m, { role: "assistant", content: reply || "Disculpá, no te entendí. ¿Me lo repetís?" }]);
+      setMsgs((m) => [...m, { role: "assistant", content: reply || L("Sorry, I didn't catch that. Could you say it again?", "Disculpá, no te entendí. ¿Me lo repetís?") }]);
     } catch (e) {
       setTyping(false);
       setMsgs((m) => [...m, {
         role: "assistant",
-        content: "Se me complicó conectarme recién 😅. Probá de nuevo en un momento; si seguís con problemas, dejame tu nombre y un email o teléfono y el equipo de SYNEXA te contacta.",
+        content: L(
+          "I had trouble connecting just now 😅. Please try again in a moment; if it keeps failing, leave me your name and an email or phone and the SYNEXA team will reach out.",
+          "Se me complicó conectarme recién 😅. Probá de nuevo en un momento; si seguís con problemas, dejame tu nombre y un email o teléfono y el equipo de SYNEXA te contacta."),
       }]);
     }
   };
@@ -1663,10 +1704,10 @@ function FloatingChat() {
             <div style={{ lineHeight: 1.2 }}>
               <div style={{ fontSize: 14.5, fontWeight: 700, color: "#f4f5f7" }}>{L("Sales assistant", "Asistente de ventas")} · {BRAND}</div>
               <div style={{ fontSize: 11, color: "#22a06b", display: "flex", alignItems: "center", gap: 5 }}>
-                <span style={{ width: 6, height: 6, borderRadius: 99, background: "#22a06b" }} /> en línea · responde al instante
+                <span style={{ width: 6, height: 6, borderRadius: 99, background: "#22a06b" }} /> {L("online · replies instantly", "en línea · responde al instante")}
               </div>
             </div>
-            <button onClick={() => setOpen(false)} aria-label="Cerrar"
+            <button onClick={() => setOpen(false)} aria-label={L("Close", "Cerrar")}
               style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#9a948b", lineHeight: 1 }}>
               ×
             </button>
@@ -1704,11 +1745,11 @@ function FloatingChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") send(); }}
-              placeholder="Escribí tu mensaje..."
+              placeholder={L("Type your message...", "Escribí tu mensaje...")}
               disabled={typing}
               style={{
                 flex: 1, border: "1px solid #23262e", borderRadius: 99, padding: "10px 16px",
-                fontSize: 14, outline: "none", fontFamily: "inherit", background: "#0f1218", color: "#f4f5f7", color: "#f4f5f7",
+                fontSize: 14, outline: "none", fontFamily: "inherit", background: "#0f1218", color: "#f4f5f7",
               }}
             />
             <button onClick={() => send()} disabled={typing || !input.trim()} aria-label="Enviar"
@@ -1751,12 +1792,22 @@ function FloatingChat() {
 }
 
 // ---- Sistema de citas: calendario + slots + formulario (guarda en Supabase) ----
-const DOW_LABELS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
-const MONTHS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+const DOW_LABELS = {
+  es: ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
+  en: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+};
+const MONTHS = {
+  es: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+  en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+};
 const pad2 = (n) => String(n).padStart(2, "0");
 
 function BookingCalendar() {
+  const { L, lang } = useLang();
   const O = "#6366f1";
+  const cell = "#171a21";
+  const months = MONTHS[lang] || MONTHS.en;
+  const dows = DOW_LABELS[lang] || DOW_LABELS.en;
   const today = new Date(); today.setHours(0, 0, 0, 0);
 
   const [view, setView] = useState({ y: today.getFullYear(), m: today.getMonth() });
@@ -1765,7 +1816,7 @@ function BookingCalendar() {
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [slotsErr, setSlotsErr] = useState(false);
   const [selTime, setSelTime] = useState(null);
-  const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", type: "Llamada", note: "" });
+  const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", type: L("Call", "Llamada"), note: "" });
   const [status, setStatus] = useState("idle"); // idle | submitting | done | error
   const [errMsg, setErrMsg] = useState("");
 
@@ -1824,10 +1875,10 @@ function BookingCalendar() {
       const data = await r.json().catch(() => ({}));
       if (r.ok) { setStatus("done"); return; }
       setStatus("error");
-      setErrMsg(data.error || "No se pudo agendar. Probá de nuevo.");
+      setErrMsg(data.error || L("Couldn't book. Please try again.", "No se pudo agendar. Probá de nuevo."));
       if (r.status === 409) { setSelTime(null); pickDay(Number(selDate.slice(8, 10))); }
     } catch (e) {
-      setStatus("error"); setErrMsg("Hubo un problema de conexión. Probá de nuevo.");
+      setStatus("error"); setErrMsg(L("There was a connection problem. Please try again.", "Hubo un problema de conexión. Probá de nuevo."));
     }
   };
 
@@ -1844,10 +1895,10 @@ function BookingCalendar() {
     return (
       <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 20, padding: "48px 36px", textAlign: "center", maxWidth: 560, margin: "0 auto" }}>
         <div style={{ width: 60, height: 60, borderRadius: 99, background: `${O}1c`, color: O, display: "grid", placeItems: "center", fontSize: 30, margin: "0 auto 18px" }}>✓</div>
-        <h3 style={{ fontFamily: "'Lora', serif", fontSize: 26, fontWeight: 600, marginBottom: 10 }}>¡Reunión agendada!</h3>
+        <h3 style={{ fontFamily: "'Lora', serif", fontSize: 26, fontWeight: 600, marginBottom: 10 }}>{L("Meeting booked!", "¡Reunión agendada!")}</h3>
         <p style={{ fontSize: 16, color: C.muted, lineHeight: 1.6 }}>
-          Te esperamos el <b style={{ color: C.ink }}>{dd}/{mm}/{yy} a las {selTime} hs</b> ({form.type}).<br />
-          Te vamos a contactar a {form.email || form.phone} para confirmar los detalles.
+          {L("We'll see you on", "Te esperamos el")} <b style={{ color: C.ink }}>{dd}/{mm}/{yy} · {selTime} hs</b> ({form.type}).<br />
+          {L("We'll reach out to", "Te vamos a contactar a")} {form.email || form.phone} {L("to confirm the details.", "para confirmar los detalles.")}
         </p>
       </div>
     );
@@ -1858,14 +1909,14 @@ function BookingCalendar() {
       {/* Calendario */}
       <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 22 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-          <button onClick={() => canPrev && move(-1)} disabled={!canPrev} aria-label="Mes anterior"
-            style={{ width: 34, height: 34, borderRadius: 9, border: `1px solid ${C.line}`, background: C.card, cursor: canPrev ? "pointer" : "default", opacity: canPrev ? 1 : 0.4, fontSize: 16 }}>‹</button>
-          <div style={{ fontWeight: 700, fontSize: 15.5 }}>{MONTHS[view.m]} {view.y}</div>
-          <button onClick={() => move(1)} aria-label="Mes siguiente"
-            style={{ width: 34, height: 34, borderRadius: 9, border: `1px solid ${C.line}`, background: C.card, cursor: "pointer", fontSize: 16 }}>›</button>
+          <button onClick={() => canPrev && move(-1)} disabled={!canPrev} aria-label={L("Previous month", "Mes anterior")}
+            style={{ width: 34, height: 34, borderRadius: 9, border: `1px solid ${C.line}`, background: C.card, color: C.ink, cursor: canPrev ? "pointer" : "default", opacity: canPrev ? 1 : 0.4, fontSize: 16 }}>‹</button>
+          <div style={{ fontWeight: 700, fontSize: 15.5 }}>{months[view.m]} {view.y}</div>
+          <button onClick={() => move(1)} aria-label={L("Next month", "Mes siguiente")}
+            style={{ width: 34, height: 34, borderRadius: 9, border: `1px solid ${C.line}`, background: C.card, color: C.ink, cursor: "pointer", fontSize: 16 }}>›</button>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 4, marginBottom: 6 }}>
-          {DOW_LABELS.map((d) => (
+          {dows.map((d) => (
             <div key={d} style={{ textAlign: "center", fontSize: 11, fontWeight: 700, color: C.muted, padding: "4px 0" }}>{d}</div>
           ))}
         </div>
@@ -1879,8 +1930,8 @@ function BookingCalendar() {
                 style={{
                   aspectRatio: "1", borderRadius: 9, fontSize: 14, fontFamily: "inherit",
                   border: sel ? `1.5px solid ${O}` : `1px solid ${dis ? "transparent" : C.line}`,
-                  background: sel ? O : (dis ? "transparent" : C.white),
-                  color: sel ? "#fff" : (dis ? "#c9c2b8" : C.ink),
+                  background: sel ? O : (dis ? "transparent" : cell),
+                  color: sel ? "#fff" : (dis ? "#4a4f5a" : C.ink),
                   cursor: dis ? "default" : "pointer", fontWeight: sel ? 700 : 500,
                 }}>
                 {d}
@@ -1894,24 +1945,24 @@ function BookingCalendar() {
       <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, minHeight: 320 }}>
         {!selDate && (
           <div style={{ color: C.muted, fontSize: 15, lineHeight: 1.6, paddingTop: 8 }}>
-            Elegí un día en el calendario para ver los horarios disponibles. <br /><br />
-            <span style={{ fontSize: 13 }}>Lun a Vie · 10:00–18:00 (hora de Argentina) · reuniones de 30 min.</span>
+            {L("Pick a day on the calendar to see the available times.", "Elegí un día en el calendario para ver los horarios disponibles.")} <br /><br />
+            <span style={{ fontSize: 13 }}>{L("Mon to Fri · 10:00–18:00 (Argentina time) · 30-min meetings.", "Lun a Vie · 10:00–18:00 (hora de Argentina) · reuniones de 30 min.")}</span>
           </div>
         )}
 
         {selDate && (
           <>
             <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: 1, color: C.muted, fontWeight: 600, marginBottom: 10 }}>
-              Horarios · {selDate.split("-").reverse().join("/")}
+              {L("Times", "Horarios")} · {selDate.split("-").reverse().join("/")}
             </div>
-            {loadingSlots && <div style={{ color: C.muted, fontSize: 14 }}>Cargando horarios…</div>}
+            {loadingSlots && <div style={{ color: C.muted, fontSize: 14 }}>{L("Loading times…", "Cargando horarios…")}</div>}
             {slotsErr && (
               <div style={{ color: C.muted, fontSize: 14, lineHeight: 1.6 }}>
-                No pudimos cargar los horarios ahora. <button onClick={() => pickDay(Number(selDate.slice(8, 10)))} style={{ color: O, background: "none", border: "none", cursor: "pointer", fontWeight: 600, padding: 0 }}>Reintentar</button>
+                {L("We couldn't load the times right now.", "No pudimos cargar los horarios ahora.")} <button onClick={() => pickDay(Number(selDate.slice(8, 10)))} style={{ color: O, background: "none", border: "none", cursor: "pointer", fontWeight: 600, padding: 0 }}>{L("Retry", "Reintentar")}</button>
               </div>
             )}
             {!loadingSlots && !slotsErr && slots && slots.length === 0 && (
-              <div style={{ color: C.muted, fontSize: 14 }}>No quedan horarios libres este día. Probá con otra fecha 🗓️</div>
+              <div style={{ color: C.muted, fontSize: 14 }}>{L("No times left for this day. Try another date 🗓️", "No quedan horarios libres este día. Probá con otra fecha 🗓️")}</div>
             )}
             {!loadingSlots && !slotsErr && slots && slots.length > 0 && (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 18 }}>
@@ -1920,7 +1971,7 @@ function BookingCalendar() {
                     style={{
                       padding: "9px 0", borderRadius: 9, fontSize: 13.5, fontFamily: "inherit", cursor: "pointer",
                       border: selTime === t ? `1.5px solid ${O}` : `1px solid ${C.line}`,
-                      background: selTime === t ? O : C.white, color: selTime === t ? "#fff" : C.ink,
+                      background: selTime === t ? O : cell, color: selTime === t ? "#fff" : C.ink,
                       fontWeight: selTime === t ? 700 : 500,
                     }}>
                     {t}
@@ -1931,17 +1982,17 @@ function BookingCalendar() {
 
             {selTime && (
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 6, animation: "fadeUp .3s ease" }}>
-                {fld("name", "Nombre y apellido *")}
-                {fld("company", "Empresa")}
-                {fld("email", "Email *", "email")}
-                {fld("phone", "Teléfono / WhatsApp *", "tel")}
+                {fld("name", L("Full name *", "Nombre y apellido *"))}
+                {fld("company", L("Company", "Empresa"))}
+                {fld("email", L("Email *", "Email *"), "email")}
+                {fld("phone", L("Phone / WhatsApp *", "Teléfono / WhatsApp *"), "tel")}
                 <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
-                  style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "11px 14px", fontSize: 14.5, fontFamily: "inherit", background: C.card }}>
-                  <option>Llamada</option>
-                  <option>Videollamada (Meet)</option>
+                  style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "11px 14px", fontSize: 14.5, fontFamily: "inherit", background: C.card, color: C.ink }}>
+                  <option>{L("Call", "Llamada")}</option>
+                  <option>{L("Video call (Meet)", "Videollamada (Meet)")}</option>
                 </select>
-                {fld("note", "Contanos brevemente qué necesitás (opcional)")}
-                {status === "error" && <div style={{ color: "#c0392b", fontSize: 13.5 }}>{errMsg}</div>}
+                {fld("note", L("Briefly tell us what you need (optional)", "Contanos brevemente qué necesitás (opcional)"))}
+                {status === "error" && <div style={{ color: "#ff6b6b", fontSize: 13.5 }}>{errMsg}</div>}
                 <button onClick={submit} disabled={!valid || status === "submitting"}
                   style={{
                     background: O, color: "#fff", border: "none", borderRadius: 11, padding: "13px 0",
@@ -1949,9 +2000,9 @@ function BookingCalendar() {
                     cursor: valid && status !== "submitting" ? "pointer" : "default",
                     opacity: valid && status !== "submitting" ? 1 : 0.55,
                   }}>
-                  {status === "submitting" ? "Agendando…" : "Confirmar reunión"}
+                  {status === "submitting" ? L("Booking…", "Agendando…") : L("Confirm meeting", "Confirmar reunión")}
                 </button>
-                <div style={{ fontSize: 11.5, color: C.muted, textAlign: "center" }}>* Nombre y al menos un medio de contacto.</div>
+                <div style={{ fontSize: 11.5, color: C.muted, textAlign: "center" }}>{L("* Name and at least one contact method.", "* Nombre y al menos un medio de contacto.")}</div>
               </div>
             )}
           </>
