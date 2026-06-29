@@ -221,10 +221,6 @@ export default function App() {
   const sans = "'Inter', system-ui, -apple-system, sans-serif";
   const serif = "'Lora', Georgia, 'Times New Roman', serif";
 
-  const wpp =
-    "https://api.whatsapp.com/send?phone=549351XXXXXXX&text=" +
-    encodeURIComponent("¡Hola! Quiero saber más sobre sus agentes de IA.");
-
   return (
     <div style={{ fontFamily: sans, color: C.ink, background: C.bg, overflowX: "hidden" }}>
       {/* Fuentes + keyframes globales */}
@@ -237,6 +233,7 @@ export default function App() {
         @keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
         @keyframes flow { from { stroke-dashoffset: 95; } to { stroke-dashoffset: 0; } }
         @keyframes growBar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+        @keyframes ringPulse { 0% { transform: scale(1); opacity:.7; } 100% { transform: scale(1.5); opacity:0; } }
         a { color: inherit; text-decoration: none; }
         .btn-primary:hover { background:${C.orangeDeep} !important; transform: translateY(-2px); }
         .btn-ghost:hover { border-color:${C.orange} !important; color:${C.orange} !important; }
@@ -929,16 +926,21 @@ export default function App() {
             </p>
           </Reveal>
           <Reveal delay={0.12}>
-            <a href={wpp} target="_blank" rel="noreferrer" className="btn-primary" style={{
-              display: "inline-block", background: C.orange, color: C.white,
-              padding: "17px 40px", borderRadius: 12, fontWeight: 600, fontSize: 17,
-              transition: "background .2s, transform .2s",
-            }}>
-              Hablemos por WhatsApp
-            </a>
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-nexa-chat"))}
+              className="btn-primary" style={{
+                display: "inline-block", background: C.orange, color: C.white, border: "none",
+                padding: "17px 40px", borderRadius: 12, fontWeight: 600, fontSize: 17, cursor: "pointer",
+                fontFamily: "inherit", transition: "background .2s, transform .2s",
+              }}>
+              Hablá con nuestra asistente IA
+            </button>
           </Reveal>
         </div>
       </section>
+
+      {/* burbuja de chat flotante (asistente de ventas IA) */}
+      <FloatingChat />
 
       {/* ===== FOOTER ===== */}
       <footer style={{ background: C.ink, color: "#cfc9bf", padding: "50px 40px 36px" }}>
@@ -1075,7 +1077,7 @@ function FlowDiagram() {
 
   // Flujo principal (izquierda -> derecha). Centros alineados en y=115.
   const flow = [
-    { x: 8,   y: 88,  w: 122, h: 54, label: "WhatsApp",  sub: "Trigger",     icon: "▸", accent: "#25d366" },
+    { x: 8,   y: 88,  w: 122, h: 54, label: "WhatsApp",  sub: "Trigger",     icon: "▸", accent: "#25d366", logo: "whatsapp" },
     { x: 192, y: 78,  w: 140, h: 74, label: "AI Agent",  sub: "Tools Agent", icon: "✦", accent: O, hot: true },
     { x: 386, y: 71,  w: 90,  h: 48, label: "Responder", sub: "WhatsApp",    icon: "↺", accent: "#25d366" },
     { x: 386, y: 129, w: 90,  h: 48, label: "CRM",       sub: "Supabase",    icon: "▦", accent: "#3ecf8e" },
@@ -1083,7 +1085,7 @@ function FlowDiagram() {
 
   // Sub-nodos que cuelgan del AI Agent (puertos reales de n8n), alineados en y=250.
   const sub = [
-    { x: 38,  y: 250, w: 130, h: 56, role: "Chat Model", label: "OpenAI",   sub: "gpt-4o",   icon: "✶", accent: "#10a37f", port: 228, cx: 103 },
+    { x: 38,  y: 250, w: 130, h: 56, role: "Chat Model", label: "OpenAI",   sub: "gpt-4o",   icon: "✶", accent: "#10a37f", port: 228, cx: 103, logo: "openai" },
     { x: 198, y: 250, w: 126, h: 56, role: "Memory",     label: "Memoria",  sub: "Postgres", icon: "◈", accent: "#8b6fd6", port: 262, cx: 261 },
     { x: 350, y: 250, w: 126, h: 56, role: "Tool",       label: "Calendar", sub: "Google",   icon: "▦", accent: "#4a90d9", port: 296, cx: 413 },
   ];
@@ -1109,8 +1111,16 @@ function FlowDiagram() {
         <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="13"
           fill={hot ? O : nodeFill} stroke={hot ? "#f4c2ac" : stroke} strokeWidth="1.5" />
         <rect x={n.x + 12} y={cy} width={cs} height={cs} rx="8" fill={hot ? "#fff" : n.accent} />
-        <text x={n.x + 12 + cs / 2} y={cy + cs / 2 + (hot ? 6 : 5)} fontSize={hot ? "17" : "14"}
-          textAnchor="middle" fill={hot ? O : "#fff"}>{n.icon}</text>
+        {n.logo ? (
+          <image
+            href={`https://cdn.simpleicons.org/${n.logo}/ffffff`}
+            x={n.x + 12 + cs * 0.19} y={cy + cs * 0.19}
+            width={cs * 0.62} height={cs * 0.62}
+          />
+        ) : (
+          <text x={n.x + 12 + cs / 2} y={cy + cs / 2 + (hot ? 6 : 5)} fontSize={hot ? "17" : "14"}
+            textAnchor="middle" fill={hot ? O : "#fff"}>{n.icon}</text>
+        )}
         <text x={tx} y={mid - 3} fontSize={hot ? "15" : "13"} fill="#fff" fontFamily={F} fontWeight="700">{n.label}</text>
         <text x={tx} y={mid + 12} fontSize="10" fontFamily={F} fontWeight="500"
           fill={hot ? "rgba(255,255,255,.82)" : muted}>{n.sub}</text>
@@ -1253,38 +1263,23 @@ function ChatDemo() {
       .filter((m, i) => !(i === 0 && m.from === "bot"))
       .map((m) => ({ role: m.from === "user" ? "user" : "assistant", content: m.text }));
 
-    // El endpoint del asesor se configura por variable de entorno (tu webhook de n8n).
-    // En n8n: recibís { system, messages } y devolvés { reply: "..." }.
-    const ENDPOINT = import.meta.env.VITE_AGENT_WEBHOOK;
-
     try {
-      if (!ENDPOINT) {
-        throw new Error("VITE_AGENT_WEBHOOK no configurado");
-      }
-      const res = await fetch(ENDPOINT, {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ system: AGENT_SYSTEM, messages: history }),
+        body: JSON.stringify({ messages: history }),
       });
       if (!res.ok) throw new Error("HTTP " + res.status);
       const data = await res.json();
-      // Aceptamos varios formatos de respuesta comunes en n8n
-      const reply =
-        data.reply ||
-        data.output ||
-        data.text ||
-        (Array.isArray(data.content)
-          ? data.content.filter((b) => b.type === "text").map((b) => b.text).join(" ")
-          : "");
+      const reply = (data.reply || "").trim();
       setTyping(false);
-      setMsgs((m) => [...m, { from: "bot", text: (reply || "").trim() || "Disculpá, no te entendí. ¿Me lo repetís?" }]);
+      setMsgs((m) => [...m, { from: "bot", text: reply || "Disculpá, no te entendí. ¿Me lo repetís?" }]);
     } catch (e) {
       setTyping(false);
       setErr(true);
       setMsgs((m) => [...m, {
         from: "bot",
-        text:
-          "Por ahora el asesor está en modo demo. Para activarlo, escribinos por WhatsApp y coordinamos una reunión 👉",
+        text: "Se me complicó conectarme recién. Probá de nuevo en un momento, o dejame tu nombre y un email/teléfono y el equipo te contacta.",
       }]);
     }
   };
@@ -1388,5 +1383,189 @@ function ChatDemo() {
         </button>
       </div>
     </div>
+  );
+}
+
+// ---- Burbuja de chat flotante: asistente de ventas IA (Groq vía /api/chat) ----
+const FLOAT_SEED = [
+  { role: "assistant", content: `¡Hola! 👋 Soy Nexa, la asistente de ventas de ${BRAND}. Te ayudo con agentes de IA y software a medida, y coordinamos una llamada si querés. ¿Qué hace tu negocio?` },
+];
+
+function FloatingChat() {
+  const O = "#d97757";
+  const [open, setOpen] = useState(false);
+  const [msgs, setMsgs] = useState(FLOAT_SEED);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const boxRef = useRef(null);
+
+  const quick = [
+    "Quiero un agente de ventas por WhatsApp",
+    "Necesito un CRM o software a medida",
+    "Quiero agendar una llamada",
+  ];
+
+  useEffect(() => {
+    if (boxRef.current) boxRef.current.scrollTop = boxRef.current.scrollHeight;
+  }, [msgs, typing, open]);
+
+  // Permite abrir el chat desde otros botones (ej. CTA de contacto)
+  useEffect(() => {
+    const openHandler = () => setOpen(true);
+    window.addEventListener("open-nexa-chat", openHandler);
+    return () => window.removeEventListener("open-nexa-chat", openHandler);
+  }, []);
+
+  const send = async (preset) => {
+    const text = (typeof preset === "string" ? preset : input).trim();
+    if (!text || typing) return;
+    const next = [...msgs, { role: "user", content: text }];
+    setMsgs(next);
+    setInput("");
+    setTyping(true);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next }),
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      const reply = (data.reply || "").trim();
+      setTyping(false);
+      setMsgs((m) => [...m, { role: "assistant", content: reply || "Disculpá, no te entendí. ¿Me lo repetís?" }]);
+    } catch (e) {
+      setTyping(false);
+      setMsgs((m) => [...m, {
+        role: "assistant",
+        content: "Se me complicó conectarme recién 😅. Probá de nuevo en un momento; si seguís con problemas, dejame tu nombre y un email o teléfono y el equipo de SYNEXA te contacta.",
+      }]);
+    }
+  };
+
+  const bubble = (m, i) => {
+    const isBot = m.role === "assistant";
+    return (
+      <div key={i} style={{
+        display: "flex", justifyContent: isBot ? "flex-start" : "flex-end",
+        marginBottom: 10, animation: "fadeUp .3s ease",
+      }}>
+        <div style={{
+          maxWidth: "82%", padding: "10px 13px", fontSize: 14, lineHeight: 1.45,
+          borderRadius: isBot ? "4px 14px 14px 14px" : "14px 4px 14px 14px",
+          background: isBot ? O : "#fff",
+          color: isBot ? "#fff" : "#1f1d1a",
+          border: isBot ? "none" : "1px solid #e7e2da",
+          boxShadow: "0 2px 8px -4px rgba(0,0,0,.15)",
+          whiteSpace: "pre-wrap",
+        }}>
+          {m.content}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      {/* Panel de chat */}
+      {open && (
+        <div style={{
+          position: "fixed", bottom: 92, right: 22, zIndex: 1001,
+          width: "min(370px, 92vw)", height: "min(540px, 72vh)",
+          display: "flex", flexDirection: "column",
+          background: "#f3f0ea", borderRadius: 18, border: "1px solid #e7e2da",
+          overflow: "hidden", boxShadow: "0 28px 60px -24px rgba(0,0,0,.5)",
+          animation: "fadeUp .25s ease",
+        }}>
+          {/* header */}
+          <div style={{ background: "#fff", padding: "13px 16px", display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid #e7e2da" }}>
+            <div style={{ width: 36, height: 36, borderRadius: 99, background: O, display: "grid", placeItems: "center", color: "#fff", fontWeight: 700 }}>✦</div>
+            <div style={{ lineHeight: 1.2 }}>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: "#1f1d1a" }}>Nexa · Asistente de ventas</div>
+              <div style={{ fontSize: 11, color: "#22a06b", display: "flex", alignItems: "center", gap: 5 }}>
+                <span style={{ width: 6, height: 6, borderRadius: 99, background: "#22a06b" }} /> en línea · responde al instante
+              </div>
+            </div>
+            <button onClick={() => setOpen(false)} aria-label="Cerrar"
+              style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#9a948b", lineHeight: 1 }}>
+              ×
+            </button>
+          </div>
+          {/* cuerpo */}
+          <div ref={boxRef} style={{ flex: 1, padding: 16, overflowY: "auto" }}>
+            {msgs.map(bubble)}
+            {typing && (
+              <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: 10 }}>
+                <div style={{ background: O, borderRadius: "4px 14px 14px 14px", padding: "12px 14px", display: "flex", gap: 4 }}>
+                  {[0, 1, 2].map((d) => (
+                    <span key={d} style={{ width: 6, height: 6, borderRadius: 99, background: "#fff",
+                      animation: "pulse 1.2s ease-in-out infinite", animationDelay: `${d * 0.2}s` }} />
+                  ))}
+                </div>
+              </div>
+            )}
+            {msgs.length === 1 && !typing && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 6 }}>
+                {quick.map((q) => (
+                  <button key={q} onClick={() => send(q)} style={{
+                    textAlign: "left", background: "#fff", border: `1px solid ${O}55`,
+                    color: "#3d3a35", borderRadius: 10, padding: "9px 12px", fontSize: 13,
+                    cursor: "pointer", fontFamily: "inherit",
+                  }}>
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* input */}
+          <div style={{ display: "flex", gap: 8, padding: 12, borderTop: "1px solid #e7e2da", background: "#fff" }}>
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") send(); }}
+              placeholder="Escribí tu mensaje..."
+              disabled={typing}
+              style={{
+                flex: 1, border: "1px solid #e7e2da", borderRadius: 99, padding: "10px 16px",
+                fontSize: 14, outline: "none", fontFamily: "inherit", background: "#faf9f6",
+              }}
+            />
+            <button onClick={() => send()} disabled={typing || !input.trim()} aria-label="Enviar"
+              style={{
+                background: O, color: "#fff", border: "none", borderRadius: 99,
+                width: 40, height: 40, cursor: typing ? "default" : "pointer",
+                fontSize: 16, display: "grid", placeItems: "center", flexShrink: 0,
+                opacity: typing || !input.trim() ? 0.5 : 1,
+              }}>
+              ↑
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Botón burbuja */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-label={open ? "Cerrar chat" : "Abrir chat con la asistente IA"}
+        style={{
+          position: "fixed", bottom: 22, right: 22, zIndex: 1001,
+          width: 60, height: 60, borderRadius: 99, border: "none", cursor: "pointer",
+          background: O, color: "#fff", fontSize: 26, display: "grid", placeItems: "center",
+          boxShadow: "0 14px 30px -10px rgba(217,119,87,.7)",
+          transition: "transform .2s",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.06)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        {open ? "×" : "💬"}
+        {!open && (
+          <span style={{
+            position: "absolute", inset: 0, borderRadius: 99,
+            border: `2px solid ${O}`, animation: "ringPulse 2s ease-out infinite",
+          }} />
+        )}
+      </button>
+    </>
   );
 }
