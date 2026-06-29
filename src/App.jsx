@@ -24,8 +24,8 @@ const C = {
 
 // ---- Datos ----
 const CLIENTS = [
-  { name: "NINIT Group", tag: "Restroom trailers · USA" },
-  { name: "Nuevo Munich", tag: "Alimentos artesanales · Córdoba" },
+  { name: "NINIT Group", tag: "Restroom trailers · Miami, Florida, USA" },
+  { name: "Nuevo Munich", tag: "Alimentos artesanales · Córdoba, Argentina" },
   { name: "CLV Financial", tag: "Tax & accounting · Miami" },
   { name: "IPIC SMO", tag: "Investigación clínica" },
 ];
@@ -61,7 +61,7 @@ const NAV_LINKS = [
 const CASES = [
   {
     client: "NINIT Group",
-    sector: "Alquiler y venta de trailers · USA",
+    sector: "Alquiler y venta de trailers · Miami, Florida, USA",
     problem: "Perdían consultas de WhatsApp fuera de horario y la carga al CRM era manual.",
     solution: "Agente de ventas en WhatsApp + CRM con IA que cotiza, califica el lead y agenda solo.",
     metrics: [["87%", "consultas resueltas por IA"], ["24/7", "atención sin cortes"], ["3x", "más leads calificados"]],
@@ -70,7 +70,7 @@ const CASES = [
   },
   {
     client: "Nuevo Munich",
-    sector: "Alimentos artesanales · Córdoba",
+    sector: "Alimentos artesanales · Córdoba, Argentina",
     problem: "Pedidos dispersos entre vendedores, sin seguimiento ni métricas unificadas.",
     solution: "CRM a medida con roles por usuario (vendedores, administración y CEO), chat interno del equipo, inbox en tiempo real, toggle bot/humano, follow-ups, reportes con contadores y descarga de PDF.",
     metrics: [["1 panel", "para todo el equipo"], ["-60%", "tiempo de gestión"], ["100%", "pedidos trazables"]],
@@ -670,10 +670,11 @@ export default function App() {
                 <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6, marginBottom: 26 }}>
                   El mismo sistema que desarrollamos para nuestros clientes, adaptado a tu operación:
                   centralizá conversaciones, gestioná tus leads y automatizá la atención desde un solo
-                  lugar, con roles por usuario y métricas en tiempo real.
+                  lugar. Y lo más importante: cada CRM incluye un <b style={{ color: C.ink }}>asistente
+                  de IA a medida</b>, entrenado para tu empresa o negocio, que atiende y vende por vos.
                 </p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 18px" }}>
-                  {["Chats multicanal", "Reportes en tiempo real", "Gestión de leads", "Asignación de agentes", "Automatizaciones", "Flujos inteligentes"].map((f) => (
+                  {["Asistente de IA a medida", "Entrenado con tus datos", "Chats multicanal", "Reportes en tiempo real", "Gestión de leads", "Asignación de agentes", "Automatizaciones", "Flujos inteligentes"].map((f) => (
                     <div key={f} style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 15, color: C.inkSoft }}>
                       <span style={{ color: C.orange, fontWeight: 700 }}>✓</span>{f}
                     </div>
@@ -965,6 +966,43 @@ export default function App() {
           </Reveal>
           <Reveal delay={0.1}>
             <BookingCalendar />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ===== NUESTRO EQUIPO ===== */}
+      <section id="equipo" className="pad" style={{ padding: "84px 40px", background: C.bgAlt, borderTop: `1px solid ${C.line}` }}>
+        <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
+          <Reveal>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600,
+              letterSpacing: 1.5, textTransform: "uppercase", color: C.orange, marginBottom: 16,
+            }}>
+              <span style={{ width: 7, height: 7, borderRadius: 99, background: C.orange }} />
+              Nuestro equipo
+            </span>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 34, fontWeight: 600, letterSpacing: -0.6, marginBottom: 16 }}>
+              Desarrollo de la mano de programadores senior
+            </h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p style={{ fontSize: 18, color: C.muted, lineHeight: 1.65, marginBottom: 34 }}>
+              Nuestro equipo cuenta con <b style={{ color: C.ink }}>programadores senior con más de 10 años
+              de experiencia</b> construyendo software real en producción. Cada proyecto se desarrolla con
+              estándares profesionales, código mantenible y acompañamiento de punta a punta.
+            </p>
+          </Reveal>
+          <Reveal delay={0.14}>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 40 }}>
+              {[["+10", "años de experiencia"], ["Senior", "desarrolladores"], ["100%", "a medida"]].map(([v, k]) => (
+                <div key={k}>
+                  <div style={{ fontFamily: serif, fontSize: 38, fontWeight: 600, color: C.orange, lineHeight: 1 }}>{v}</div>
+                  <div style={{ fontSize: 14, color: C.muted, marginTop: 6 }}>{k}</div>
+                </div>
+              ))}
+            </div>
           </Reveal>
         </div>
       </section>
