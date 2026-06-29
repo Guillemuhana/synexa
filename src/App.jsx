@@ -65,6 +65,7 @@ const CASES = [
     problem: "Perdían consultas de WhatsApp fuera de horario y la carga al CRM era manual.",
     solution: "Agente de ventas en WhatsApp + CRM con IA que cotiza, califica el lead y agenda solo.",
     metrics: [["87%", "consultas resueltas por IA"], ["24/7", "atención sin cortes"], ["3x", "más leads calificados"]],
+    video: "/caso-ninit.mp4",
   },
   {
     client: "Nuevo Munich",
@@ -72,6 +73,7 @@ const CASES = [
     problem: "Pedidos dispersos entre vendedores, sin seguimiento ni métricas unificadas.",
     solution: "CRM a medida con roles por usuario (vendedores, administración y CEO), chat interno del equipo, inbox en tiempo real, toggle bot/humano, follow-ups, reportes con contadores y descarga de PDF.",
     metrics: [["1 panel", "para todo el equipo"], ["-60%", "tiempo de gestión"], ["100%", "pedidos trazables"]],
+    video: "/caso-nuevomunich.mp4",
   },
 ];
 
@@ -693,10 +695,22 @@ export default function App() {
                         <div style={{ fontSize: 13, color: "#cfc9bf", marginTop: 4 }}>{k}</div>
                       </div>
                     ))}
-                    {/* PLACEHOLDER: acá va captura real del CRM/agente */}
-                    <div style={{ marginTop: 6, fontSize: 11, color: "#7d766c", border: "1px dashed #4a453e", borderRadius: 8, padding: "8px 10px", textAlign: "center" }}>
-                      ◳ captura real del producto
-                    </div>
+                    {/* video real del producto (autoplay, silenciado, en loop) */}
+                    {cs.video ? (
+                      <video
+                        src={cs.video}
+                        autoPlay muted loop playsInline preload="metadata"
+                        style={{
+                          marginTop: 6, width: "100%", borderRadius: 10, display: "block",
+                          aspectRatio: "16 / 9", objectFit: "cover",
+                          border: "1px solid #4a453e", background: "#000",
+                        }}
+                      />
+                    ) : (
+                      <div style={{ marginTop: 6, fontSize: 11, color: "#7d766c", border: "1px dashed #4a453e", borderRadius: 8, padding: "8px 10px", textAlign: "center" }}>
+                        ◳ captura real del producto
+                      </div>
+                    )}
                   </div>
                 </div>
               </Reveal>
