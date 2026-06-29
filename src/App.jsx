@@ -380,6 +380,7 @@ export default function App() {
           .mobile-menu { display:block !important; }
           .hero-pad { padding: 120px 22px 70px !important; }
           .hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .hero-mockup { display: none !important; }
           .pad { padding: 70px 22px !important; }
         }
         @media (max-width: 520px){
@@ -561,7 +562,7 @@ export default function App() {
           </div>
 
           {/* Columna derecha: mockup de producto */}
-          <Reveal delay={0.15}>
+          <Reveal delay={0.15} className="hero-mockup">
             <HeroMockup />
           </Reveal>
         </div>
