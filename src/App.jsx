@@ -678,7 +678,7 @@ export default function App() {
         <CodeBackdrop />
         <div className="hero-grid" style={{
           position: "relative", zIndex: 1,
-          display: "grid", gridTemplateColumns: "1.05fr .95fr", gap: 56, alignItems: "center",
+          display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 48, alignItems: "center",
         }}>
           {/* Columna izquierda: texto */}
           <div>
@@ -1586,7 +1586,7 @@ function FlowDiagram() {
   const outLink = (o) => { const oy = o.y + OH / 2; return `M 416 108 C 444 108, 444 ${oy}, ${OX} ${oy}`; };
 
   return (
-    <svg viewBox="0 0 720 352" style={{ width: "100%", maxWidth: 560, display: "block", margin: "0 auto" }}>
+    <svg viewBox="0 0 720 352" style={{ width: "100%", maxWidth: 720, display: "block", margin: "0 auto" }}>
       <defs>
         <radialGradient id="agentGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor={O} stopOpacity="0.45" />
