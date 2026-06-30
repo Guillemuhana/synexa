@@ -477,6 +477,27 @@ function RotatingWord() {
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [view, setView] = useState("home"); // "home" | "pricing"
+  // Navegación: Precios abre su propia página; el resto vuelve al home y hace scroll al ancla.
+  const goTo = (h) => {
+    setMenuOpen(false);
+    if (h === "#precios") {
+      setView("pricing");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    if (view !== "home") {
+      setView("home");
+      setTimeout(() => {
+        if (h === "#top") window.scrollTo({ top: 0, behavior: "smooth" });
+        else document.querySelector(h)?.scrollIntoView({ behavior: "smooth" });
+      }, 60);
+    } else if (h === "#top") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      document.querySelector(h)?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   const [lang, setLang] = useState(() => {
     try { return localStorage.getItem("synexa-lang") || "en"; } catch { return "en"; }
   });
@@ -542,6 +563,7 @@ export default function App() {
           .nav-cta { display:none !important; }
           .burger { display:block !important; }
           .mobile-menu { display:block !important; }
+          .side-booking { display:none !important; }
           .hero-pad { padding: 120px 22px 70px !important; }
           .hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .hero-mockup { display: none !important; }
@@ -570,14 +592,14 @@ export default function App() {
           borderBottom: `1px solid ${C.line}`,
         }}
       >
-        <a href="#top" className="logo-wrap">
+        <a href="#top" className="logo-wrap" onClick={(e) => { e.preventDefault(); goTo("#top"); }}>
           <img src={logoLight} alt="SYNEXA" style={{ height: 26, width: "auto", display: "block", filter: "brightness(0) invert(1)" }} />
           <span className="shooting-star" aria-hidden="true" />
         </a>
 
         <div className="nav-links" style={{ display: "flex", gap: 30, fontSize: 15, color: C.inkSoft }}>
           {NAV_LINKS.map(([t, h]) => (
-            <a key={t} href={h} className="nav-link" style={{ transition: "color .2s" }}>{t}</a>
+            <a key={t} href={h} onClick={(e) => { e.preventDefault(); goTo(h); }} className="nav-link" style={{ transition: "color .2s" }}>{t}</a>
           ))}
         </div>
 
@@ -642,18 +664,26 @@ export default function App() {
         }}
       >
         {NAV_LINKS.map(([t, h]) => (
-          <a key={t} href={h} onClick={() => setMenuOpen(false)} style={{
+          <a key={t} href={h} onClick={(e) => { e.preventDefault(); goTo(h); }} style={{
             display: "block", padding: "14px 0", fontSize: 17, fontWeight: 500,
             color: C.inkSoft, borderBottom: `1px solid ${C.line}`,
           }}>{t}</a>
         ))}
-        <a href="#contacto" onClick={() => setMenuOpen(false)} style={{
+        <a href="#agenda" onClick={(e) => { e.preventDefault(); goTo("#agenda"); }} style={{
+          display: "flex", alignItems: "center", gap: 9, padding: "14px 0", fontSize: 17, fontWeight: 500,
+          color: C.inkSoft, borderBottom: `1px solid ${C.line}`,
+        }}>
+          <span style={{ color: C.orange, fontSize: 16 }}>🗓️</span>
+          {L("Book a meeting", "Agendá una reunión")}
+        </a>
+        <a href="#contacto" onClick={(e) => { e.preventDefault(); goTo("#contacto"); }} style={{
           display: "block", marginTop: 16, textAlign: "center",
           background: C.orange, color: C.white, padding: "14px", borderRadius: 10,
           fontSize: 16, fontWeight: 600,
         }}>{L("Contact us", "Contactanos")}</a>
       </div>
 
+      {view === "home" && (<>
       {/* ===== HERO ===== */}
       <header
         className="hero-pad"
@@ -678,7 +708,7 @@ export default function App() {
         <CodeBackdrop />
         <div className="hero-grid" style={{
           position: "relative", zIndex: 1,
-          display: "grid", gridTemplateColumns: "0.85fr 1.15fr", gap: 48, alignItems: "center",
+          display: "grid", gridTemplateColumns: "0.72fr 1.28fr", gap: 40, alignItems: "center",
         }}>
           {/* Columna izquierda: texto */}
           <div>
@@ -734,12 +764,12 @@ export default function App() {
           {/* Columna derecha: diagrama del agente de IA (estilo n8n, arriba) */}
           <Reveal delay={0.15}>
             <div style={{
-              background: "#0c0e13", border: `1px solid ${C.line}`, borderRadius: 16,
-              padding: "14px 12px 12px", boxShadow: "0 30px 70px -34px rgba(0,0,0,.6)",
+              background: "#0c0e13", border: `1px solid ${C.line}`, borderRadius: 18,
+              padding: "20px 18px 18px", boxShadow: "0 36px 84px -34px rgba(0,0,0,.65)",
             }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "2px 6px 12px" }}>
-                <span style={{ width: 7, height: 7, borderRadius: 99, background: C.orange }} />
-                <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: 0.4, color: C.muted }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "2px 6px 14px" }}>
+                <span style={{ width: 8, height: 8, borderRadius: 99, background: C.orange }} />
+                <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: 0.4, color: C.muted }}>
                   {L("AI agent workflow", "Flujo de agente de IA")}
                 </span>
               </div>
@@ -1238,69 +1268,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* ===== PRECIOS ===== */}
-      <section id="precios" className="pad" style={{ padding: "100px 40px" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
-          <Reveal>
-            <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 42, fontWeight: 600, letterSpacing: -0.8, marginBottom: 14, textAlign: "center" }}>
-              {L("Plans that fit your business", "Planes que se adaptan a tu negocio")}
-            </h2>
-          </Reveal>
-          <Reveal delay={0.05}>
-            <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6, marginBottom: 54, textAlign: "center", maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
-              {L("Every project is quoted by scope. These are the most common starting points.", "Cada proyecto se cotiza según el alcance. Estos son los puntos de partida más comunes.")}
-            </p>
-          </Reveal>
-
-          <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 22, alignItems: "stretch" }}>
-            {PRICING.map((p, i) => (
-              <Reveal key={p.name} delay={i * 0.08}>
-                <div className="card-hover" style={{
-                  background: p.highlight ? "#161922" : C.card,
-                  border: p.highlight ? "1px solid rgba(255,255,255,.2)" : `1px solid ${C.line}`,
-                  borderRadius: 20, padding: "34px 30px", height: "100%",
-                  display: "flex", flexDirection: "column",
-                  position: "relative",
-                  boxShadow: p.highlight ? "0 26px 56px -30px rgba(0,0,0,.7)" : "none",
-                }}>
-                  {p.highlight && (
-                    <span style={{
-                      position: "absolute", top: 18, right: 18, fontSize: 11, fontWeight: 700,
-                      color: "#0a0b0e", background: C.orange, padding: "4px 11px", borderRadius: 99,
-                      letterSpacing: 0.5,
-                    }}>POPULAR</span>
-                  )}
-                  <div style={{ fontFamily: serif, fontSize: 26, fontWeight: 600, marginBottom: 6, color: C.ink }}>
-                    {p.name}
-                  </div>
-                  <div style={{ fontSize: 14, color: C.muted, marginBottom: 24 }}>
-                    {p.tagline}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 11, marginBottom: 28, flex: 1 }}>
-                    {p.features.map((f) => (
-                      <div key={f} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                        <span style={{ color: C.orange, fontWeight: 700, fontSize: 15, lineHeight: 1.4 }}>✓</span>
-                        <span style={{ fontSize: 14.5, lineHeight: 1.45, color: p.highlight ? "#e8e3da" : C.inkSoft }}>{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <a href="#contacto" style={{
-                    display: "block", textAlign: "center", padding: "13px",
-                    borderRadius: 11, fontWeight: 600, fontSize: 15,
-                    background: p.highlight ? C.orange : "transparent",
-                    color: p.highlight ? "#0a0b0e" : C.ink,
-                    border: p.highlight ? "none" : `1.5px solid ${C.line}`,
-                    transition: "all .2s",
-                  }}>
-                    {L("Request a quote", "Pedir cotización")}
-                  </a>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ===== CTA / CONTACTO ===== */}
       <section id="contacto" className="pad" style={{ padding: "110px 40px" }}>
         <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
@@ -1361,42 +1328,111 @@ export default function App() {
         </div>
       </section>
 
-      {/* ===== NUESTRO EQUIPO ===== */}
-      <section id="equipo" className="pad" style={{ padding: "84px 40px", background: C.bgAlt, borderTop: `1px solid ${C.line}` }}>
-        <div style={{ maxWidth: 880, margin: "0 auto", textAlign: "center" }}>
+      {/* ===== NUESTRO EQUIPO (compacto) ===== */}
+      <section id="equipo" className="pad" style={{ padding: "44px 40px", background: C.bgAlt, borderTop: `1px solid ${C.line}` }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
           <Reveal>
             <span style={{
-              display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600,
-              letterSpacing: 1.5, textTransform: "uppercase", color: C.orange, marginBottom: 16,
+              display: "inline-flex", alignItems: "center", gap: 7, fontSize: 11.5, fontWeight: 600,
+              letterSpacing: 1.4, textTransform: "uppercase", color: C.orange, marginBottom: 12,
             }}>
-              <span style={{ width: 7, height: 7, borderRadius: 99, background: C.orange }} />
+              <span style={{ width: 6, height: 6, borderRadius: 99, background: C.orange }} />
               {L("Our team", "Nuestro equipo")}
             </span>
           </Reveal>
           <Reveal delay={0.05}>
-            <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 34, fontWeight: 600, letterSpacing: -0.6, marginBottom: 16 }}>
+            <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 24, fontWeight: 600, letterSpacing: -0.4, marginBottom: 10 }}>
               {L("Built by senior developers", "Desarrollo de la mano de programadores senior")}
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
-            <p style={{ fontSize: 18, color: C.muted, lineHeight: 1.65, marginBottom: 34 }}>
+            <p style={{ fontSize: 14.5, color: C.muted, lineHeight: 1.55, marginBottom: 22, maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
               {L(
-                <>Our team has <b style={{ color: C.ink }}>senior developers with over 10 years of experience</b> building real software in production. Every project is developed with professional standards, maintainable code and end-to-end support.</>,
-                <>Nuestro equipo cuenta con <b style={{ color: C.ink }}>programadores senior con más de 10 años de experiencia</b> construyendo software real en producción. Cada proyecto se desarrolla con estándares profesionales, código mantenible y acompañamiento de punta a punta.</>)}
+                <>Our team has <b style={{ color: C.ink }}>senior developers with over 10 years of experience</b> building real software in production.</>,
+                <>Nuestro equipo cuenta con <b style={{ color: C.ink }}>programadores senior con más de 10 años de experiencia</b> construyendo software real en producción.</>)}
             </p>
           </Reveal>
           <Reveal delay={0.14}>
-            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 40 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 28 }}>
               {[["+10", L("years of experience", "años de experiencia")], ["Senior", L("developers", "desarrolladores")], ["100%", L("tailor-made", "a medida")]].map(([v, k]) => (
                 <div key={k}>
-                  <div style={{ fontFamily: serif, fontSize: 38, fontWeight: 600, color: C.orange, lineHeight: 1 }}>{v}</div>
-                  <div style={{ fontSize: 14, color: C.muted, marginTop: 6 }}>{k}</div>
+                  <div style={{ fontFamily: serif, fontSize: 26, fontWeight: 600, color: C.orange, lineHeight: 1 }}>{v}</div>
+                  <div style={{ fontSize: 12.5, color: C.muted, marginTop: 4 }}>{k}</div>
                 </div>
               ))}
             </div>
           </Reveal>
         </div>
       </section>
+      </>)}
+
+      {/* ===== PÁGINA PRECIOS (independiente, accesible desde el menú) ===== */}
+      {view === "pricing" && (
+        <section id="precios" className="pad" style={{ padding: "150px 40px 110px", minHeight: "70vh" }}>
+          <div style={{ maxWidth: 1180, margin: "0 auto" }}>
+            <Reveal>
+              <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 42, fontWeight: 600, letterSpacing: -0.8, marginBottom: 14, textAlign: "center" }}>
+                {L("Plans that fit your business", "Planes que se adaptan a tu negocio")}
+              </h2>
+            </Reveal>
+            <Reveal delay={0.05}>
+              <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6, marginBottom: 54, textAlign: "center", maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
+                {L("Every project is quoted by scope. These are the most common starting points.", "Cada proyecto se cotiza según el alcance. Estos son los puntos de partida más comunes.")}
+              </p>
+            </Reveal>
+
+            <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 22, alignItems: "stretch" }}>
+              {PRICING.map((p, i) => (
+                <Reveal key={p.name} delay={i * 0.08}>
+                  <div className="card-hover" style={{
+                    background: p.highlight ? "#161922" : C.card,
+                    border: p.highlight ? "1px solid rgba(255,255,255,.2)" : `1px solid ${C.line}`,
+                    borderRadius: 20, padding: "34px 30px", height: "100%",
+                    display: "flex", flexDirection: "column",
+                    position: "relative",
+                    boxShadow: p.highlight ? "0 26px 56px -30px rgba(0,0,0,.7)" : "none",
+                  }}>
+                    {p.highlight && (
+                      <span style={{
+                        position: "absolute", top: 18, right: 18, fontSize: 11, fontWeight: 700,
+                        color: "#0a0b0e", background: C.orange, padding: "4px 11px", borderRadius: 99,
+                        letterSpacing: 0.5,
+                      }}>POPULAR</span>
+                    )}
+                    <div style={{ fontFamily: serif, fontSize: 26, fontWeight: 600, marginBottom: 6, color: C.ink }}>
+                      {p.name}
+                    </div>
+                    <div style={{ fontSize: 14, color: C.muted, marginBottom: 24 }}>
+                      {p.tagline}
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 11, marginBottom: 28, flex: 1 }}>
+                      {p.features.map((f) => (
+                        <div key={f} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                          <span style={{ color: C.orange, fontWeight: 700, fontSize: 15, lineHeight: 1.4 }}>✓</span>
+                          <span style={{ fontSize: 14.5, lineHeight: 1.45, color: p.highlight ? "#e8e3da" : C.inkSoft }}>{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <a href="#contacto" onClick={(e) => { e.preventDefault(); goTo("#contacto"); }} style={{
+                      display: "block", textAlign: "center", padding: "13px",
+                      borderRadius: 11, fontWeight: 600, fontSize: 15,
+                      background: p.highlight ? C.orange : "transparent",
+                      color: p.highlight ? "#0a0b0e" : C.ink,
+                      border: p.highlight ? "none" : `1.5px solid ${C.line}`,
+                      transition: "all .2s",
+                    }}>
+                      {L("Request a quote", "Pedir cotización")}
+                    </a>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* pestaña lateral desplegable para agendar reunión (desktop) */}
+      <SideBooking onBook={() => goTo("#agenda")} />
 
       {/* burbuja de chat flotante (asistente de ventas IA) */}
       <FloatingChat />
@@ -1586,7 +1622,7 @@ function FlowDiagram() {
   const outLink = (o) => { const oy = o.y + OH / 2; return `M 416 108 C 444 108, 444 ${oy}, ${OX} ${oy}`; };
 
   return (
-    <svg viewBox="0 0 720 352" style={{ width: "100%", maxWidth: 720, display: "block", margin: "0 auto" }}>
+    <svg viewBox="0 0 720 352" style={{ width: "100%", maxWidth: 900, display: "block", margin: "0 auto" }}>
       <defs>
         <radialGradient id="agentGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor={O} stopOpacity="0.45" />
@@ -2093,6 +2129,95 @@ const MONTHS = {
   en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 };
 const pad2 = (n) => String(n).padStart(2, "0");
+
+// ---- Pestaña lateral desplegable: "Agendá una reunión" (hover en desktop) ----
+function SideBooking({ onBook }) {
+  const { L } = useLang();
+  const O = "#6366f1";
+  const [hover, setHover] = useState(false);
+
+  return (
+    <div
+      className="side-booking"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        position: "fixed", left: 0, top: "44%", transform: "translateY(-50%)",
+        zIndex: 45, display: "flex", alignItems: "stretch",
+      }}
+    >
+      {/* pestaña vertical siempre visible */}
+      <button
+        onClick={onBook}
+        aria-label={L("Book a meeting", "Agendá una reunión")}
+        style={{
+          background: C.grad, color: "#0a0b0e", border: "none", cursor: "pointer",
+          borderRadius: "0 13px 13px 0", padding: "18px 11px",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: 11,
+          fontFamily: "inherit", fontWeight: 700, fontSize: 13, letterSpacing: 0.4,
+          boxShadow: hover
+            ? `0 0 0 1px rgba(255,255,255,.5), 0 20px 44px -16px rgba(0,0,0,.75)`
+            : "0 14px 32px -16px rgba(0,0,0,.6)",
+          transition: "box-shadow .35s ease, transform .35s cubic-bezier(.2,.7,.2,1)",
+          transform: hover ? "scale(1.04)" : "scale(1)",
+        }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0a0b0e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }}>
+          <rect x="3" y="4" width="18" height="18" rx="2.5" />
+          <path d="M16 2v4M8 2v4M3 10h18" />
+        </svg>
+        <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
+          {L("Book a meeting", "Agendá una reunión")}
+        </span>
+      </button>
+
+      {/* panel desplegable (sale al pasar el mouse) */}
+      <div
+        style={{
+          width: hover ? 272 : 0,
+          opacity: hover ? 1 : 0,
+          overflow: "hidden",
+          transition: "width .42s cubic-bezier(.2,.7,.2,1), opacity .3s ease",
+          background: C.card,
+          borderTop: `1px solid ${hover ? C.line : "transparent"}`,
+          borderRight: `1px solid ${hover ? C.line : "transparent"}`,
+          borderBottom: `1px solid ${hover ? C.line : "transparent"}`,
+          borderRadius: "0 16px 16px 0",
+          boxShadow: hover ? "0 28px 64px -26px rgba(0,0,0,.75)" : "none",
+        }}
+      >
+        <div style={{ width: 272, padding: "22px 22px 24px" }}>
+          <span style={{
+            display: "inline-flex", alignItems: "center", gap: 7, fontSize: 11.5, fontWeight: 700,
+            letterSpacing: 1.2, textTransform: "uppercase", color: C.orange, marginBottom: 12,
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: 99, background: C.orange, animation: "pulse 1.8s infinite" }} />
+            {L("Free · 20 min", "Gratis · 20 min")}
+          </span>
+          <h3 style={{ fontFamily: "'Lora', serif", fontSize: 21, fontWeight: 600, letterSpacing: -0.3, marginBottom: 8, color: C.ink }}>
+            {L("Meet our team", "Reunite con nuestro equipo")}
+          </h3>
+          <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.55, marginBottom: 18 }}>
+            {L(
+              "Pick a day and time. We'll set up a short call to understand your case.",
+              "Elegí día y horario. Coordinamos una llamada corta para entender tu caso.")}
+          </p>
+          <button
+            onClick={onBook}
+            className="btn-primary"
+            style={{
+              width: "100%", background: C.orange, color: "#0a0b0e", border: "none",
+              padding: "13px", borderRadius: 11, fontWeight: 600, fontSize: 15, cursor: "pointer",
+              fontFamily: "inherit", transition: "transform .2s, filter .2s",
+            }}
+          >
+            {L("Choose date & time", "Elegí día y hora")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function BookingCalendar() {
   const { L, lang } = useLang();
