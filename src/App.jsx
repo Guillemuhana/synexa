@@ -669,7 +669,7 @@ export default function App() {
             color: C.inkSoft, borderBottom: `1px solid ${C.line}`,
           }}>{t}</a>
         ))}
-        <a href="#agenda" onClick={(e) => { e.preventDefault(); goTo("#agenda"); }} style={{
+        <a href="#agenda" onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.dispatchEvent(new Event("open-booking")); }} style={{
           display: "flex", alignItems: "center", gap: 9, padding: "14px 0", fontSize: 17, fontWeight: 500,
           color: C.inkSoft, borderBottom: `1px solid ${C.line}`,
         }}>
@@ -743,7 +743,7 @@ export default function App() {
 
             <Reveal delay={0.18}>
               <div className="hero-cta" style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-                <a href="#agenda" className="btn-primary" style={{
+                <a href="#agenda" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("open-booking")); }} className="btn-primary" style={{
                   background: C.orange, color: C.white, padding: "16px 32px",
                   borderRadius: 12, fontWeight: 600, fontSize: 16, textAlign: "center",
                   transition: "background .2s, transform .2s",
@@ -1285,7 +1285,7 @@ export default function App() {
           </Reveal>
           <Reveal delay={0.12}>
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center" }}>
-              <a href="#agenda" className="btn-primary" style={{
+              <a href="#agenda" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("open-booking")); }} className="btn-primary" style={{
                 display: "inline-block", background: C.orange, color: C.white,
                 padding: "17px 40px", borderRadius: 12, fontWeight: 600, fontSize: 17,
                 transition: "background .2s, transform .2s",
@@ -1307,26 +1307,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* ===== AGENDA / SISTEMA DE CITAS ===== */}
-      <section id="agenda" className="pad" style={{ padding: "20px 40px 110px" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
-          <Reveal>
-            <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 38, fontWeight: 600, letterSpacing: -0.7, marginBottom: 12, textAlign: "center" }}>
-              {L("Book your call or meeting", "Agendá tu llamada o reunión")}
-            </h2>
-          </Reveal>
-          <Reveal delay={0.05}>
-            <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6, marginBottom: 40, textAlign: "center", maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
-              {L(
-                "Pick the day and time that works best for you. We'll set up a short meeting to understand your case and show you how we can help.",
-                "Elegí el día y horario que mejor te quede. Coordinamos una reunión corta para entender tu caso y mostrarte cómo te podemos ayudar.")}
-            </p>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <BookingCalendar />
-          </Reveal>
-        </div>
-      </section>
 
       {/* ===== NUESTRO EQUIPO (compacto) ===== */}
       <section id="equipo" className="pad" style={{ padding: "44px 40px", background: C.bgAlt, borderTop: `1px solid ${C.line}` }}>
@@ -1432,7 +1412,10 @@ export default function App() {
       )}
 
       {/* pestaña lateral desplegable para agendar reunión (desktop) */}
-      <SideBooking onBook={() => goTo("#agenda")} />
+      <SideBooking onBook={() => window.dispatchEvent(new Event("open-booking"))} />
+
+      {/* modal con el calendario (se abre desde la pestaña/CTAs) */}
+      <BookingModal />
 
       {/* burbuja de chat flotante (asistente de ventas IA) */}
       <FloatingChat />
@@ -2129,6 +2112,74 @@ const MONTHS = {
   en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 };
 const pad2 = (n) => String(n).padStart(2, "0");
+
+// ---- Modal con el calendario de reservas (se abre desde la pestaña / CTAs) ----
+function BookingModal() {
+  const { L } = useLang();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const openHandler = () => setOpen(true);
+    window.addEventListener("open-booking", openHandler);
+    return () => window.removeEventListener("open-booking", openHandler);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    if (open) {
+      window.addEventListener("keydown", onKey);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      onClick={() => setOpen(false)}
+      style={{
+        position: "fixed", inset: 0, zIndex: 80,
+        background: "rgba(4,5,7,.72)", backdropFilter: "blur(6px)",
+        display: "flex", alignItems: "flex-start", justifyContent: "center",
+        padding: "40px 20px", overflowY: "auto",
+        animation: "fadeUp .25s ease",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          position: "relative", width: "100%", maxWidth: 1040, margin: "auto 0",
+          background: C.bg, border: `1px solid ${C.line}`, borderRadius: 20,
+          padding: "44px 36px 36px", boxShadow: "0 50px 120px -40px rgba(0,0,0,.9)",
+        }}
+      >
+        <button
+          onClick={() => setOpen(false)}
+          aria-label={L("Close", "Cerrar")}
+          style={{
+            position: "absolute", top: 16, right: 16, width: 38, height: 38,
+            borderRadius: 99, background: C.card, border: `1px solid ${C.line}`,
+            color: C.inkSoft, fontSize: 20, lineHeight: 1, cursor: "pointer",
+            display: "grid", placeItems: "center", fontFamily: "inherit",
+          }}
+        >×</button>
+        <h2 className="sec-h2" style={{ fontFamily: "'Lora', serif", fontSize: 32, fontWeight: 600, letterSpacing: -0.6, marginBottom: 10, textAlign: "center" }}>
+          {L("Book your call or meeting", "Agendá tu llamada o reunión")}
+        </h2>
+        <p style={{ fontSize: 16, color: C.muted, lineHeight: 1.6, marginBottom: 30, textAlign: "center", maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
+          {L(
+            "Pick the day and time that works best for you. We'll set up a short meeting to understand your case.",
+            "Elegí el día y horario que mejor te quede. Coordinamos una reunión corta para entender tu caso.")}
+        </p>
+        <BookingCalendar />
+      </div>
+    </div>
+  );
+}
 
 // ---- Pestaña lateral desplegable: "Agendá una reunión" (hover en desktop) ----
 function SideBooking({ onBook }) {
