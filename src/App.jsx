@@ -331,6 +331,124 @@ function StatsBand() {
   );
 }
 
+// CRM premium diseñado en React (no es captura): KPIs + pipeline + mini chart + chat
+function CRMDashboard() {
+  const { L } = useLang();
+  const I = "#6366f1"; // acento de UI del producto
+  const panel = "#0e1117";
+  const line = "rgba(255,255,255,.08)";
+  const sub = "#8b909c";
+
+  const kpis = [
+    { v: "$48.2K", k: L("Monthly sales", "Ventas del mes"), up: "+18%" },
+    { v: "312", k: L("New leads", "Leads nuevos"), up: "+24%" },
+    { v: "87%", k: L("Resolved by AI", "Resueltos por IA"), up: "+9%" },
+    { v: "24", k: L("Meetings", "Reuniones"), up: "+6" },
+  ];
+  const cols = [
+    { t: L("New", "Nuevo"), deals: [["Acme Corp", "$3.2K"], ["Delta SA", "$1.1K"]] },
+    { t: L("Contacted", "Contactado"), deals: [["Nova Ltd", "$5.8K"], ["Pixel Co", "$2.4K"]] },
+    { t: L("Proposal", "Propuesta"), deals: [["Vortex", "$9.0K"]] },
+    { t: L("Won", "Ganado"), deals: [["Lumen Inc", "$12K"]] },
+  ];
+  const bars = [40, 65, 52, 80, 70, 95, 60];
+  const chat = [
+    { me: false, t: L("Hi! I need a quote 🙂", "¡Hola! Necesito un presupuesto 🙂") },
+    { me: true, t: L("Hi 👋 I can help right now.", "¡Hola 👋 Te ayudo ahora mismo.") },
+    { me: true, t: L("Sent! Want to book a call?", "¡Enviado! ¿Agendamos una llamada?") },
+  ];
+  const tabs = [L("Pipeline", "Pipeline"), L("Clients", "Clientes"), L("Chats", "Chats"), L("Calendar", "Calendario"), L("Stats", "Reportes")];
+
+  return (
+    <div style={{ background: panel, border: `1px solid ${line}`, borderRadius: 16, overflow: "hidden", boxShadow: "0 40px 90px -40px rgba(0,0,0,.8)" }}>
+      {/* chrome */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 16px", borderBottom: `1px solid ${line}`, background: "#0b0d12" }}>
+        <span style={{ width: 11, height: 11, borderRadius: 99, background: "#ff5f57" }} />
+        <span style={{ width: 11, height: 11, borderRadius: 99, background: "#febc2e" }} />
+        <span style={{ width: 11, height: 11, borderRadius: 99, background: "#28c840" }} />
+        <span style={{ marginLeft: 8, fontSize: 13, fontWeight: 700, color: "#fff" }}>SYNEXA <span style={{ color: I }}>CRM</span></span>
+        <div className="crm-tabs" style={{ marginLeft: 22, display: "flex", gap: 18 }}>
+          {tabs.map((t, i) => (
+            <span key={t} style={{ fontSize: 12.5, fontWeight: 600, color: i === 0 ? "#fff" : sub, borderBottom: i === 0 ? `2px solid ${I}` : "2px solid transparent", paddingBottom: 3 }}>{t}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* KPIs */}
+      <div className="grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 1, background: line }}>
+        {kpis.map((k) => (
+          <div key={k.k} style={{ background: panel, padding: "16px 18px" }}>
+            <div style={{ fontSize: 11, color: sub, marginBottom: 6 }}>{k.k}</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+              <span style={{ fontFamily: "'Lora', serif", fontSize: 24, fontWeight: 600, color: "#fff" }}>{k.v}</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#3ecf8e" }}>{k.up}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* body: pipeline + lateral */}
+      <div className="crm-body" style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 1, background: line }}>
+        {/* pipeline kanban */}
+        <div style={{ background: panel, padding: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", marginBottom: 12 }}>{L("Sales pipeline", "Embudo de ventas")}</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 }}>
+            {cols.map((c) => (
+              <div key={c.t}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5, color: sub, marginBottom: 8 }}>{c.t}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                  {c.deals.map(([n, a]) => (
+                    <div key={n} style={{ background: "#141821", border: `1px solid ${line}`, borderRadius: 9, padding: "9px 10px" }}>
+                      <div style={{ fontSize: 11.5, fontWeight: 600, color: "#e8eaf0", marginBottom: 4 }}>{n}</div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: I }}>{a}</span>
+                        <span style={{ width: 16, height: 16, borderRadius: 99, background: `${I}33`, fontSize: 8, fontWeight: 700, color: "#cbd0ff", display: "grid", placeItems: "center" }}>{n[0]}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* mini chart */}
+          <div style={{ marginTop: 16, fontSize: 12, fontWeight: 700, color: "#fff", marginBottom: 10 }}>{L("Conversations / day", "Conversaciones / día")}</div>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 64 }}>
+            {bars.map((h, i) => (
+              <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: "5px 5px 0 0", background: `linear-gradient(180deg, ${I}, ${I}44)`, animation: "growBar .8s ease both", transformOrigin: "bottom", animationDelay: `${i * 0.06}s` }} />
+            ))}
+          </div>
+        </div>
+
+        {/* lateral: chat WhatsApp */}
+        <div style={{ background: panel, padding: 16, display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <span style={{ width: 26, height: 26, borderRadius: 99, background: "#25d36622", display: "grid", placeItems: "center" }}>
+              <img src="https://cdn.simpleicons.org/whatsapp/25d366" alt="" width="15" height="15" />
+            </span>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", lineHeight: 1.1 }}>Venus Brown</div>
+              <div style={{ fontSize: 10, color: "#3ecf8e" }}>{L("online", "en línea")}</div>
+            </div>
+            <span style={{ marginLeft: "auto", fontSize: 9.5, fontWeight: 700, color: I, background: `${I}1c`, padding: "3px 8px", borderRadius: 99 }}>BOT</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+            {chat.map((m, i) => (
+              <div key={i} style={{ alignSelf: m.me ? "flex-end" : "flex-start", maxWidth: "85%", fontSize: 11.5, lineHeight: 1.4, padding: "8px 11px", borderRadius: m.me ? "12px 4px 12px 12px" : "4px 12px 12px 12px", background: m.me ? I : "#161a21", color: m.me ? "#fff" : "#dfe3ea" }}>{m.t}</div>
+            ))}
+            <div style={{ alignSelf: "flex-start", display: "flex", gap: 3, padding: "9px 11px", background: "#161a21", borderRadius: "4px 12px 12px 12px" }}>
+              {[0, 1, 2].map((d) => <span key={d} style={{ width: 5, height: 5, borderRadius: 99, background: sub, animation: "pulse 1.2s ease-in-out infinite", animationDelay: `${d * 0.2}s` }} />)}
+            </div>
+          </div>
+          <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8, border: `1px solid ${line}`, borderRadius: 99, padding: "8px 12px" }}>
+            <span style={{ fontSize: 11.5, color: sub }}>{L("Type a message…", "Escribí un mensaje…")}</span>
+            <span style={{ marginLeft: "auto", width: 22, height: 22, borderRadius: 99, background: I, color: "#fff", fontSize: 12, display: "grid", placeItems: "center" }}>↑</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Palabra rotatoria del hero (como "Empresas/Equipos/Decisiones..." de la ref)
 function RotatingWord() {
   const { lang } = useLang();
@@ -429,6 +547,8 @@ export default function App() {
           .hero-mockup { display: none !important; }
           .hero-cta { flex-wrap: nowrap !important; gap: 10px !important; }
           .hero-cta > a { flex: 1; padding: 13px 12px !important; font-size: 14px !important; }
+          .crm-body { grid-template-columns: 1fr !important; }
+          .crm-tabs { display: none !important; }
           .hero-flow-mobile { display: block !important; margin-top: 30px; }
           .pad { padding: 70px 22px !important; }
         }
@@ -657,6 +777,36 @@ export default function App() {
 
       {/* ===== ESTADÍSTICAS (números animados) ===== */}
       <StatsBand />
+
+      {/* ===== DASHBOARD CRM (diseñado en React) ===== */}
+      <section id="dashboard" className="pad" style={{ padding: "100px 40px" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <Reveal>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600,
+              letterSpacing: 1.5, textTransform: "uppercase", color: C.orange, marginBottom: 16,
+            }}>
+              <span style={{ width: 7, height: 7, borderRadius: 99, background: C.orange }} />
+              {L("Your platform", "Tu plataforma")}
+            </span>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 40, fontWeight: 600, letterSpacing: -0.8, marginBottom: 14, maxWidth: 640 }}>
+              {L("A CRM that feels like real software", "Un CRM que se siente como software real")}
+            </h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p style={{ fontSize: 17.5, color: C.muted, lineHeight: 1.6, maxWidth: 640, marginBottom: 44 }}>
+              {L(
+                "Manage leads, conversations, pipeline and your team — all in one place, with the AI working alongside you.",
+                "Gestioná leads, conversaciones, embudo y tu equipo — todo en un solo lugar, con la IA trabajando a tu lado.")}
+            </p>
+          </Reveal>
+          <Reveal delay={0.14}>
+            <CRMDashboard />
+          </Reveal>
+        </div>
+      </section>
 
       {/* ===== SERVICIOS / CAPACIDADES ===== */}
       <section id="servicios" className="pad" style={{ padding: "100px 40px" }}>
