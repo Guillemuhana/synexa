@@ -1533,7 +1533,7 @@ function CodeBackdrop() {
   }, []);
   return (
     <pre aria-hidden="true" style={{
-      position: "absolute", top: 0, bottom: 0, right: 0, left: -38, margin: 0, padding: "120px 0 0 0",
+      position: "absolute", top: 0, bottom: 0, right: 0, left: -200, margin: 0, padding: "120px 0 0 0",
       fontFamily: "ui-monospace, 'SF Mono', Menlo, Consolas, monospace",
       fontSize: 14, lineHeight: 1.75, color: C.orange,
       opacity: 0.06, zIndex: 0, pointerEvents: "none",
