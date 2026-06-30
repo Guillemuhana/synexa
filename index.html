@@ -1,17 +1,127 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="SYNEXA — Agencia de agentes de IA. Automatizamos tareas, mejoramos la atención a tus clientes y construimos software a medida." />
-    <meta property="og:title" content="SYNEXA · Agentes de IA" />
-    <meta property="og:description" content="Agentes de IA que trabajan para tu negocio. Automatización, CRM con IA y apps a medida." />
+    <meta name="theme-color" content="#08090c" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+
+    <!-- ============================================================
+         SEO PRINCIPAL
+         NOTA: cuando compres el dominio propio, reemplazá
+         https://synexa-eight.vercel.app por tu dominio en TODO
+         este archivo, en /public/robots.txt y en /public/sitemap.xml
+         ============================================================ -->
+    <title>SYNEXA — AI Agents & Automation Agency | Florida (USA) & Argentina</title>
+    <meta name="description" content="SYNEXA builds AI agents, WhatsApp sales bots, custom CRMs and process automation for businesses in Florida (USA) and Argentina. Automate sales, support and operations 24/7." />
+    <meta name="keywords" content="AI agents agency, AI automation Florida, WhatsApp AI sales agent, custom CRM with AI, n8n automation, AI chatbot Miami, business automation USA, agentes de IA, automatización Argentina" />
+    <meta name="author" content="SYNEXA" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://synexa-eight.vercel.app/" />
+
+    <!-- Geo / Local SEO (Florida) -->
+    <meta name="geo.region" content="US-FL" />
+    <meta name="geo.placename" content="Miami, Florida" />
+    <meta name="ICBM" content="25.7617, -80.1918" />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <title>SYNEXA · Agentes de IA</title>
+    <meta property="og:site_name" content="SYNEXA" />
+    <meta property="og:title" content="SYNEXA — AI Agents & Automation Agency | Florida & Argentina" />
+    <meta property="og:description" content="AI agents, WhatsApp sales bots, custom CRMs and automation that work for your business 24/7. Serving Florida (USA) and Argentina." />
+    <meta property="og:url" content="https://synexa-eight.vercel.app/" />
+    <meta property="og:image" content="https://synexa-eight.vercel.app/synexa.png" />
+    <meta property="og:image:alt" content="SYNEXA — AI Agents Agency" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="es_AR" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SYNEXA — AI Agents & Automation Agency" />
+    <meta name="twitter:description" content="AI agents, WhatsApp sales bots, custom CRMs and automation for businesses in Florida (USA) and Argentina." />
+    <meta name="twitter:image" content="https://synexa-eight.vercel.app/synexa.png" />
+
+    <!-- Performance: precarga de orígenes de fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- ============================================================
+         DATOS ESTRUCTURADOS (JSON-LD) — Local SEO
+         ProfessionalService que presta servicio en Florida (USA) y Argentina.
+         Sin dirección física (servicio remoto). Cuando tengas NAP real
+         (dirección + teléfono), agregalo en "address" y "telephone".
+         ============================================================ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "@id": "https://synexa-eight.vercel.app/#organization",
+      "name": "SYNEXA",
+      "alternateName": "SYNEXA AI Agents Agency",
+      "url": "https://synexa-eight.vercel.app/",
+      "logo": "https://synexa-eight.vercel.app/synexa.png",
+      "image": "https://synexa-eight.vercel.app/synexa.png",
+      "description": "Agency building AI agents, WhatsApp sales bots, custom CRMs and process automation for businesses in Florida (USA) and Argentina.",
+      "priceRange": "$$",
+      "knowsLanguage": ["en", "es"],
+      "areaServed": [
+        { "@type": "State", "name": "Florida", "containedInPlace": { "@type": "Country", "name": "United States" } },
+        { "@type": "City", "name": "Miami" },
+        { "@type": "Country", "name": "Argentina" }
+      ],
+      "serviceType": [
+        "AI agents development",
+        "WhatsApp AI sales agents",
+        "Business process automation",
+        "Custom CRM with AI",
+        "Custom software development"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "AI & automation services",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Conversational AI agents (WhatsApp, web, multichannel)" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Process automation with n8n" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom CRM with built-in AI" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom apps & software development" } }
+        ]
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://synexa-eight.vercel.app/",
+      "name": "SYNEXA",
+      "inLanguage": ["en", "es"],
+      "publisher": { "@id": "https://synexa-eight.vercel.app/#organization" }
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Contenido de respaldo para crawlers / usuarios sin JavaScript -->
+    <noscript>
+      <main style="max-width:760px;margin:0 auto;padding:48px 24px;font-family:system-ui,sans-serif;color:#111;">
+        <h1>SYNEXA — AI Agents &amp; Automation Agency</h1>
+        <p>We build AI agents, WhatsApp sales bots, custom CRMs and process automation for
+        businesses in <strong>Florida (USA)</strong> and <strong>Argentina</strong>. Automate
+        sales, customer support, follow-ups and internal processes with intelligent agents
+        connected to WhatsApp, CRM and your favorite tools.</p>
+        <h2>Our services</h2>
+        <ul>
+          <li>Conversational AI agents (WhatsApp, web, multichannel)</li>
+          <li>Business process automation with n8n</li>
+          <li>Custom CRM with built-in AI</li>
+          <li>Custom apps &amp; software development</li>
+        </ul>
+        <p>This site needs JavaScript enabled to load the full experience.</p>
+      </main>
+    </noscript>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

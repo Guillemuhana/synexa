@@ -4,6 +4,8 @@
 //  Lee las reservas desde Supabase (PostgREST) con la service key (server-side).
 // ============================================================
 
+import { guard, fail } from "./_lib/security.js";
+
 // Horario laboral: 10:00 a 18:00, slots de 30 min (último arranque 17:30).
 function slotTimes() {
   const out = [];
@@ -16,9 +18,11 @@ function slotTimes() {
 const SLOT_TIMES = slotTimes();
 
 export default async function handler(req, res) {
+  if (!guard(req, res, { methods: ["GET"], limit: 60, windowMs: 60_000, name: "slots" })) return;
+
   const date = String((req.query && req.query.date) || "").slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    res.status(400).json({ error: "Fecha inválida" });
+    fail(res, 400, "Invalid date");
     return;
   }
 
@@ -32,11 +36,12 @@ export default async function handler(req, res) {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_KEY;
   if (!url || !key) {
-    res.status(500).json({ error: "Supabase no configurado" });
+    fail(res, 500, "Service temporarily unavailable", "Supabase no configurado");
     return;
   }
 
   try {
+    // date ya está validado por regex (sin riesgo de inyección en la query).
     const r = await fetch(`${url}/rest/v1/bookings?date=eq.${date}&select=time`, {
       headers: { apikey: key, Authorization: `Bearer ${key}` },
     });
@@ -44,6 +49,6 @@ export default async function handler(req, res) {
     const slots = SLOT_TIMES.filter((t) => !taken.includes(t));
     res.status(200).json({ slots });
   } catch (e) {
-    res.status(500).json({ error: String((e && e.message) || e) });
+    fail(res, 500, "Something went wrong. Please try again.", e);
   }
 }

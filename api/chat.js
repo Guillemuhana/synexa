@@ -4,6 +4,8 @@
 //  El frontend hace POST /api/chat con { messages: [{role, content}] }.
 // ============================================================
 
+import { guard, fail } from "./_lib/security.js";
+
 const SYSTEM_PROMPT = `
 Sos el asistente de ventas con IA de SYNEXA (no tenés nombre propio; si te preguntan tu nombre, decí que sos simplemente el asistente de SYNEXA). SYNEXA es una agencia que construye:
 - Agentes de IA conversacionales (WhatsApp, web, multicanal) para atención y ventas.
@@ -30,45 +32,64 @@ Si el usuario escribe en otro idioma, respondé en ese idioma.
 `.trim();
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
-  }
+  // Método + origin + rate limit (el chat consume tokens de Groq → cuesta dinero).
+  if (!guard(req, res, { methods: ["POST"], limit: 15, windowMs: 60_000, name: "chat" })) return;
 
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    res.status(500).json({ error: "GROQ_API_KEY no configurada en el servidor." });
+    fail(res, 500, "Service temporarily unavailable", "GROQ_API_KEY no configurada");
     return;
   }
 
   try {
     // Vercel parsea el body JSON automáticamente; por las dudas soportamos string.
+    const raw = typeof req.body === "string" ? req.body : JSON.stringify(req.body || {});
+    if (raw && raw.length > 24_000) {
+      fail(res, 413, "Payload too large");
+      return;
+    }
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
     const incoming = Array.isArray(body.messages) ? body.messages : [];
 
     // Sanitizamos y limitamos el historial.
     const history = incoming
       .slice(-20)
-      .filter((m) => m && (m.role === "user" || m.role === "assistant") && m.content)
+      .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string" && m.content.trim())
       .map((m) => ({ role: m.role, content: String(m.content).slice(0, 2000) }));
 
-    const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        temperature: 0.6,
-        max_tokens: 500,
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...history],
-      }),
-    });
+    if (!history.length) {
+      fail(res, 400, "No message provided");
+      return;
+    }
+
+    // Timeout defensivo para no dejar la función colgada si Groq no responde.
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 25_000);
+
+    let r;
+    try {
+      r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        signal: ctrl.signal,
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          temperature: 0.6,
+          max_tokens: 500,
+          messages: [{ role: "system", content: SYSTEM_PROMPT }, ...history],
+        }),
+      });
+    } finally {
+      clearTimeout(timer);
+    }
 
     if (!r.ok) {
       const detail = await r.text();
-      res.status(502).json({ error: "Error de Groq", detail: detail.slice(0, 300) });
+      // El detalle del proveedor queda en logs, NO se devuelve al cliente.
+      fail(res, 502, "The assistant is unavailable right now. Please try again.", detail.slice(0, 500));
       return;
     }
 
@@ -76,6 +97,6 @@ export default async function handler(req, res) {
     const reply = data?.choices?.[0]?.message?.content?.trim() || "";
     res.status(200).json({ reply });
   } catch (e) {
-    res.status(500).json({ error: String((e && e.message) || e) });
+    fail(res, 500, "Something went wrong. Please try again.", e);
   }
 }

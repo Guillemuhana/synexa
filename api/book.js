@@ -4,6 +4,8 @@
 //  doble reserva: si el slot ya está tomado, Supabase devuelve 409.
 // ============================================================
 
+import { guard, fail } from "./_lib/security.js";
+
 function slotTimes() {
   const out = [];
   for (let h = 10; h < 18; h++) {
@@ -14,16 +16,16 @@ function slotTimes() {
 }
 const SLOT_TIMES = slotTimes();
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
-  }
+  // Método + origin + rate limit (evita spam de reservas).
+  if (!guard(req, res, { methods: ["POST"], limit: 8, windowMs: 60_000, name: "book" })) return;
 
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_KEY;
   if (!url || !key) {
-    res.status(500).json({ error: "Supabase no configurado" });
+    fail(res, 500, "Booking is temporarily unavailable", "Supabase no configurado");
     return;
   }
 
@@ -32,11 +34,15 @@ export default async function handler(req, res) {
     const { date, time, name, company, email, phone, type, note } = b;
 
     if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date || "")) || !SLOT_TIMES.includes(time)) {
-      res.status(400).json({ error: "Fecha u horario inválidos" });
+      fail(res, 400, "Invalid date or time");
       return;
     }
     if (!name || !String(name).trim() || (!email && !phone)) {
-      res.status(400).json({ error: "Necesitamos tu nombre y un email o teléfono" });
+      fail(res, 400, "We need your name and an email or phone");
+      return;
+    }
+    if (email && !EMAIL_RE.test(String(email).slice(0, 160))) {
+      fail(res, 400, "Invalid email address");
       return;
     }
 
@@ -69,8 +75,8 @@ export default async function handler(req, res) {
       return;
     }
     const detail = await r.text();
-    res.status(502).json({ error: "No se pudo guardar la reserva", detail: detail.slice(0, 300) });
+    fail(res, 502, "We couldn't save your booking. Please try again.", detail.slice(0, 500));
   } catch (e) {
-    res.status(500).json({ error: String((e && e.message) || e) });
+    fail(res, 500, "Something went wrong. Please try again.", e);
   }
 }
