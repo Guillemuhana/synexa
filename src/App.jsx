@@ -288,6 +288,49 @@ function Reveal({ children, delay = 0, as: Tag = "div", style, ...rest }) {
   );
 }
 
+// Número que cuenta hacia arriba al entrar en pantalla
+function CountUp({ to, prefix = "", suffix = "", duration = 1500 }) {
+  const [ref, shown] = useReveal();
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (!shown) return;
+    let raf, start;
+    const tick = (t) => {
+      if (!start) start = t;
+      const p = Math.min((t - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setVal(Math.round(eased * to));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [shown, to, duration]);
+  return <span ref={ref}>{prefix}{val}{suffix}</span>;
+}
+
+// Banda de estadísticas con números grandes animados
+function StatsBand() {
+  const { L } = useLang();
+  const stats = [
+    { node: <CountUp prefix="+" to={80} suffix="%" />, label: L("more productivity", "más productividad") },
+    { node: "24/7", label: L("automated support", "atención automática") },
+    { node: <CountUp to={10} suffix="X" />, label: L("faster", "más velocidad") },
+    { node: L("Thousands", "Miles"), label: L("of simultaneous conversations", "de conversaciones simultáneas") },
+  ];
+  return (
+    <section className="pad" style={{ padding: "70px 40px", borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`, background: C.bgAlt }}>
+      <div className="grid-4" style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 24, textAlign: "center" }}>
+        {stats.map((s, i) => (
+          <Reveal key={i} delay={i * 0.08}>
+            <div className="grad-text" style={{ fontFamily: "'Lora', serif", fontSize: 46, fontWeight: 600, lineHeight: 1, marginBottom: 8 }}>{s.node}</div>
+            <div style={{ fontSize: 14.5, color: C.muted }}>{s.label}</div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // Palabra rotatoria del hero (como "Empresas/Equipos/Decisiones..." de la ref)
 function RotatingWord() {
   const { lang } = useLang();
@@ -356,14 +399,16 @@ export default function App() {
         }
         .logo-wrap { position: relative; display: flex; align-items: center; gap: 10px; }
         .hero-flow-mobile { display: none; }
+        .logo-gray { opacity: .55; transition: opacity .25s ease, transform .25s ease; }
+        .logo-gray:hover { opacity: 1; transform: scale(1.08); }
         .shooting-star { position: absolute; left: 0; top: 6px; width: 46px; height: 2px; border-radius: 99px; pointer-events: none; opacity: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.92)); animation: shoot 6s ease-in-out infinite; }
         .shooting-star::after { content: ""; position: absolute; right: -1px; top: -1.5px; width: 5px; height: 5px; border-radius: 99px; background: #fff; box-shadow: 0 0 9px 2px rgba(255,255,255,.85); }
         a { color: inherit; text-decoration: none; }
         .btn-primary { background: ${C.grad} !important; color: #0a0b0e !important; border: none !important; box-shadow: 0 8px 28px -8px rgba(255,255,255,.28); }
         .btn-primary:hover { filter: brightness(1.04); transform: translateY(-2px); }
         .btn-ghost:hover { border-color:${C.orange} !important; color:${C.orange} !important; }
-        .card-hover { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 24px 54px -28px rgba(0,0,0,.8); border-color: rgba(255,255,255,.3) !important; }
+        .card-hover { transition: transform .28s cubic-bezier(.2,.7,.2,1), box-shadow .28s ease, border-color .28s ease; }
+        .card-hover:hover { transform: translateY(-5px) scale(1.012); box-shadow: 0 28px 64px -26px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.07); border-color: rgba(255,255,255,.34) !important; }
         .nav-link:hover { color:${C.orange} !important; }
         .grad-text { background: ${C.grad}; -webkit-background-clip: text; background-clip: text; color: transparent; }
         ::selection { background: rgba(255,255,255,.18); }
@@ -530,49 +575,56 @@ export default function App() {
 
             <Reveal delay={0.05}>
               <h1 className="hero-h1" style={{
-                fontFamily: serif, fontWeight: 600, fontSize: 56, lineHeight: 1.06,
+                fontFamily: serif, fontWeight: 600, fontSize: 54, lineHeight: 1.08,
                 letterSpacing: -1.2, color: C.ink, marginBottom: 22,
               }}>
-                {L("AI agents that work for your", "Agentes de IA que trabajan para tus")} <RotatingWord />
+                {L("AI agents that work for your company", "Agentes de IA que trabajan para tu empresa")}{" "}
+                <span className="grad-text">{L("24/7.", "las 24 horas.")}</span>
               </h1>
             </Reveal>
 
             <Reveal delay={0.12}>
-              <p style={{ fontSize: 19, lineHeight: 1.6, color: C.muted, maxWidth: 520, marginBottom: 36 }}>
+              <p style={{ fontSize: 19, lineHeight: 1.6, color: C.muted, maxWidth: 540, marginBottom: 36 }}>
                 {L(
-                  "We automate tasks, improve your customer support and build the custom software your business needs.",
-                  "Automatizamos tareas, mejoramos la atención a tus clientes y construimos el software a medida que tu negocio necesita.")}
+                  "Automate sales, customer support, follow-ups and internal processes with intelligent agents connected to WhatsApp, CRM and your favorite tools.",
+                  "Automatizá ventas, atención al cliente, seguimiento y procesos internos con agentes inteligentes conectados a WhatsApp, CRM y tus herramientas favoritas.")}
               </p>
             </Reveal>
 
             <Reveal delay={0.18}>
               <div className="hero-cta" style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-                <a href="#asesor" className="btn-primary" style={{
-                  background: C.orange, color: C.white, padding: "15px 30px",
+                <a href="#agenda" className="btn-primary" style={{
+                  background: C.orange, color: C.white, padding: "16px 32px",
                   borderRadius: 12, fontWeight: 600, fontSize: 16, textAlign: "center",
                   transition: "background .2s, transform .2s",
                 }}>
-                  {L("Try our AI advisor", "Probá nuestro asesor IA")}
+                  {L("Request a Demo", "Solicitar Demo")}
                 </a>
-                <a href="#contacto" className="btn-ghost" style={{
-                  border: `1.5px solid ${C.line}`, color: C.inkSoft, padding: "15px 30px",
+                <a href="#asesor" className="btn-ghost" style={{
+                  border: `1.5px solid ${C.line}`, color: C.inkSoft, padding: "16px 32px",
                   borderRadius: 12, fontWeight: 600, fontSize: 16, textAlign: "center",
                   transition: "border-color .2s, color .2s",
                 }}>
-                  {L("Book a demo", "Agendá una demo")}
+                  {L("See the Platform", "Ver Plataforma")}
                 </a>
               </div>
             </Reveal>
-
-            {/* diagrama del agente n8n: solo en móvil (reemplaza al mockup oculto) */}
-            <div className="hero-flow-mobile">
-              <FlowDiagram />
-            </div>
           </div>
 
-          {/* Columna derecha: mockup de producto */}
-          <Reveal delay={0.15} className="hero-mockup">
-            <HeroMockup />
+          {/* Columna derecha: diagrama del agente de IA (estilo n8n, arriba) */}
+          <Reveal delay={0.15}>
+            <div style={{
+              background: "#0c0e13", border: `1px solid ${C.line}`, borderRadius: 16,
+              padding: "14px 12px 12px", boxShadow: "0 30px 70px -34px rgba(0,0,0,.6)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "2px 6px 12px" }}>
+                <span style={{ width: 7, height: 7, borderRadius: 99, background: C.orange }} />
+                <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: 0.4, color: C.muted }}>
+                  {L("AI agent workflow", "Flujo de agente de IA")}
+                </span>
+              </div>
+              <FlowDiagram />
+            </div>
           </Reveal>
         </div>
       </header>
@@ -602,6 +654,9 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      {/* ===== ESTADÍSTICAS (números animados) ===== */}
+      <StatsBand />
 
       {/* ===== SERVICIOS / CAPACIDADES ===== */}
       <section id="servicios" className="pad" style={{ padding: "100px 40px" }}>
@@ -704,9 +759,9 @@ export default function App() {
                 </Reveal>
               ))}
             </div>
-            {/* Mini diagrama de flujo tipo n8n */}
+            {/* Mockup de producto (CRM + chat) */}
             <Reveal delay={0.1}>
-              <FlowDiagram />
+              <HeroMockup />
             </Reveal>
           </div>
         </div>
@@ -791,19 +846,22 @@ export default function App() {
       <section id="tech" className="pad" style={{ padding: "80px 40px", background: C.bg, borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}` }}>
         <div style={{ maxWidth: 1180, margin: "0 auto", textAlign: "center" }}>
           <Reveal>
-            <h2 className="sec-h2" style={{ fontFamily: serif, fontSize: 34, fontWeight: 600, letterSpacing: -0.5, marginBottom: 38 }}>
-              {L("Technology we use", "Tecnología que utilizamos")}
-            </h2>
+            <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: 1.5, textTransform: "uppercase", color: C.muted, marginBottom: 34 }}>
+              {L("Compatible with", "Compatible con")}
+            </div>
           </Reveal>
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 14 }}>
-            {TECH.map((t, i) => (
-              <Reveal key={t} delay={i * 0.05} as="span">
-                <span className="card-hover" style={{
-                  display: "inline-block", background: C.card, border: `1px solid ${C.line}`,
-                  borderRadius: 99, padding: "12px 26px", fontSize: 16, fontWeight: 600, color: C.inkSoft,
-                }}>
-                  {t}
-                </span>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "26px 42px", maxWidth: 920, margin: "0 auto" }}>
+            {[
+              { s: "whatsapp" }, { s: "openai", inline: true }, { s: "claude" }, { s: "googlecalendar" },
+              { s: "gmail" }, { s: "meta" }, { s: "stripe" }, { s: "supabase" },
+              { s: "n8n" }, { s: "postgresql" }, { s: "react" }, { s: "nodedotjs" },
+            ].map((t, i) => (
+              <Reveal key={t.s} delay={i * 0.04} as="span">
+                {t.inline ? (
+                  <span className="logo-gray" style={{ color: "#aab0bd", display: "inline-block" }}><OpenAIMark size={30} /></span>
+                ) : (
+                  <img className="logo-gray" src={`https://cdn.simpleicons.org/${t.s}/aab0bd`} alt={t.s} title={t.s} height="30" loading="lazy" style={{ height: 30, width: "auto" }} />
+                )}
               </Reveal>
             ))}
           </div>
