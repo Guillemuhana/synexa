@@ -46,8 +46,8 @@ function sweep() {
 // Permite same-origin (sin header Origin), *.vercel.app (incluye previews)
 // y localhost en desarrollo. Cuando tengas dominio propio, agregalo acá.
 const ALLOWED_HOSTS = [
-  // "synexa.com",
-  // "www.synexa.com",
+  "ergagora.com",
+  "www.ergagora.com",
 ];
 
 export function isAllowedOrigin(req) {

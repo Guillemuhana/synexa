@@ -1,6 +1,6 @@
-# SYNEXA · Landing de agentes de IA
+# ERGAGORA · Landing de agentes de IA
 
-Landing one-page para la agencia **SYNEXA**, hecha en **React 18 + Vite**. Sin dependencias
+Landing one-page para la agencia **ERGAGORA**, hecha en **React 18 + Vite**. Sin dependencias
 externas de UI: todo el estilo es inline y las animaciones son CSS/SVG/Canvas.
 
 ## Requisitos
@@ -25,14 +25,14 @@ npm run preview  # previsualiza el build localmente
 ## Estructura
 
 ```
-synexa/
+ergagora/
 ├─ index.html
 ├─ vite.config.js
 ├─ vercel.json            # rewrites para que funcione como SPA
 ├─ .env.example           # plantilla de variables de entorno
 ├─ public/
-│  ├─ synexa-logo.png            # logo (nav)
-│  ├─ synexa-logo-transparent.png# logo sin fondo (footer)
+│  ├─ ergagora-logo.png            # logo (nav)
+│  ├─ ergagora-logo-transparent.png# logo sin fondo (footer)
 │  └─ favicon.png
 └─ src/
    ├─ main.jsx
@@ -47,7 +47,7 @@ El chat de la sección "Tu asesor de IA" llama a un webhook configurable por var
 1. Copiá `.env.example` a `.env` y completá:
 
    ```
-   VITE_AGENT_WEBHOOK=https://tu-instancia.n8n.cloud/webhook/synexa-asesor
+   VITE_AGENT_WEBHOOK=https://tu-instancia.n8n.cloud/webhook/ergagora-asesor
    ```
 
 2. En n8n armá un workflow con un nodo **Webhook (POST)** que reciba este body:

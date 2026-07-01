@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import logo from "/synexa-logo.png";
-import logoLight from "/synexa-logo-transparent.png";
+import logo from "/ergagora-logo.png";
+import logoLight from "/ergagora-logo-transparent.png";
 
 // ============================================================
-//  SYNEXA — Agencia de Agentes de IA
+//  ERGAGORA — Agencia de Agentes de IA
 //  Paleta derivada del logo: naranja #dd7b52 + tinta #26303a.
 // ============================================================
 
-const BRAND = "SYNEXA";
+const BRAND = "ERGAGORA";
 
-// ---- Paleta: tema oscuro monocromo (negro + blanco + glow), estilo synexa.ai ----
+// ---- Paleta: tema oscuro monocromo (negro + blanco + glow), estilo ergagora.ai ----
 const C = {
   orange: "#ffffff",     // acento monocromo blanco — clave 'orange' por compatibilidad
   orangeDeep: "#d4d4d8",
@@ -366,7 +366,7 @@ function CRMDashboard() {
         <span style={{ width: 11, height: 11, borderRadius: 99, background: "#ff5f57" }} />
         <span style={{ width: 11, height: 11, borderRadius: 99, background: "#febc2e" }} />
         <span style={{ width: 11, height: 11, borderRadius: 99, background: "#28c840" }} />
-        <span style={{ marginLeft: 8, fontSize: 13, fontWeight: 700, color: "#fff" }}>SYNEXA <span style={{ color: I }}>CRM</span></span>
+        <span style={{ marginLeft: 8, fontSize: 13, fontWeight: 700, color: "#fff" }}>ERGAGORA <span style={{ color: I }}>CRM</span></span>
         <div className="crm-tabs" style={{ marginLeft: 22, display: "flex", gap: 18 }}>
           {tabs.map((t, i) => (
             <span key={t} style={{ fontSize: 12.5, fontWeight: 600, color: i === 0 ? "#fff" : sub, borderBottom: i === 0 ? `2px solid ${I}` : "2px solid transparent", paddingBottom: 3 }}>{t}</span>
@@ -499,10 +499,10 @@ export default function App() {
     }
   };
   const [lang, setLang] = useState(() => {
-    try { return localStorage.getItem("synexa-lang") || "en"; } catch { return "en"; }
+    try { return localStorage.getItem("ergagora-lang") || "en"; } catch { return "en"; }
   });
   const L = (en, es) => (lang === "es" ? es : en);
-  useEffect(() => { try { localStorage.setItem("synexa-lang", lang); } catch (e) {} }, [lang]);
+  useEffect(() => { try { localStorage.setItem("ergagora-lang", lang); } catch (e) {} }, [lang]);
   const sans = "'Inter', system-ui, -apple-system, sans-serif";
   const serif = "'Lora', Georgia, 'Times New Roman', serif";
 
@@ -593,7 +593,7 @@ export default function App() {
         }}
       >
         <a href="#top" className="logo-wrap" onClick={(e) => { e.preventDefault(); goTo("#top"); }}>
-          <img src={logoLight} alt="SYNEXA" style={{ height: 26, width: "auto", display: "block", filter: "brightness(0) invert(1)" }} />
+          <img src={logoLight} alt="ERGAGORA" style={{ height: 26, width: "auto", display: "block", filter: "brightness(0) invert(1)" }} />
           <span className="shooting-star" aria-hidden="true" />
         </a>
 
@@ -1096,11 +1096,11 @@ export default function App() {
                     marginLeft: 10, flex: 1, fontSize: 12, color: "#8a929c",
                     background: "#0e1216", borderRadius: 7, padding: "5px 12px",
                     fontFamily: "ui-monospace, Menlo, monospace",
-                  }}>app.synexia.com/crm</span>
+                  }}>app.ergagora.com/crm</span>
                 </div>
                 <img
-                  src="/crm-synexia.png"
-                  alt="CRM a medida de SYNEXA"
+                  src="/crm-ergagora.png"
+                  alt="CRM a medida de ERGAGORA"
                   style={{ width: "100%", display: "block" }}
                   onError={(e) => {
                     const blk = e.currentTarget.closest("[data-crm-block]");
@@ -1423,7 +1423,7 @@ export default function App() {
       {/* ===== FOOTER ===== */}
       <footer style={{ background: "#0c0e13", color: "#cfc9bf", padding: "50px 40px 36px" }}>
         <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 24, alignItems: "center" }}>
-          <img src={logoLight} alt="SYNEXA" style={{ height: 24, width: "auto", filter: "brightness(0) invert(1)", opacity: 0.92 }} />
+          <img src={logoLight} alt="ERGAGORA" style={{ height: 24, width: "auto", filter: "brightness(0) invert(1)", opacity: 0.92 }} />
           <span style={{ fontSize: 14 }}>© {new Date().getFullYear()} {BRAND}</span>
         </div>
       </footer>
@@ -1969,8 +1969,8 @@ function FloatingChat() {
       setMsgs((m) => [...m, {
         role: "assistant",
         content: L(
-          "I had trouble connecting just now 😅. Please try again in a moment; if it keeps failing, leave me your name and an email or phone and the SYNEXA team will reach out.",
-          "Se me complicó conectarme recién 😅. Probá de nuevo en un momento; si seguís con problemas, dejame tu nombre y un email o teléfono y el equipo de SYNEXA te contacta."),
+          "I had trouble connecting just now 😅. Please try again in a moment; if it keeps failing, leave me your name and an email or phone and the ERGAGORA team will reach out.",
+          "Se me complicó conectarme recién 😅. Probá de nuevo en un momento; si seguís con problemas, dejame tu nombre y un email o teléfono y el equipo de ERGAGORA te contacta."),
       }]);
     }
   };

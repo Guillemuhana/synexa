@@ -1,4 +1,4 @@
-# 🚀 SYNEXA — Checklist de producción
+# 🚀 ERGAGORA — Checklist de producción
 
 Lo que hace el código ya está. Esto es lo que tenés que verificar **vos** en
 Vercel / Supabase antes de largar a producción.
@@ -20,7 +20,7 @@ Marcá las tres para el entorno **Production** (y Preview si querés probar):
 
 ## 3. SEO
 - [ ] Verificar el sitio en **Google Search Console** y enviar el sitemap:
-      `https://synexa-eight.vercel.app/sitemap.xml`
+      `https://ergagora.com/sitemap.xml`
 - [ ] Probar los datos estructurados en https://search.google.com/test/rich-results
 - [ ] Probar la preview social (Open Graph) en https://www.opengraph.xyz/
 - [ ] (Local SEO Florida) Crear un **Google Business Profile** con NAP real
@@ -35,7 +35,7 @@ Marcá las tres para el entorno **Production** (y Preview si querés probar):
 - [ ] Verificar headers en https://securityheaders.com/ después del deploy.
 
 ## 5. Cuando compres el dominio propio
-Reemplazá `https://synexa-eight.vercel.app` por tu dominio en:
+Reemplazá `https://ergagora.com` por tu dominio en:
 - [ ] `index.html` (canonical, og:url, og:image, twitter:image, JSON-LD)
 - [ ] `public/robots.txt` (línea `Sitemap:`)
 - [ ] `public/sitemap.xml` (`<loc>`)
