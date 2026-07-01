@@ -593,7 +593,7 @@ export default function App() {
         }}
       >
         <a href="#top" className="logo-wrap" onClick={(e) => { e.preventDefault(); goTo("#top"); }}>
-          <img src={logoLight} alt="ERGAGORA" style={{ height: 26, width: "auto", display: "block", filter: "brightness(0) invert(1)" }} />
+          <img src={logoLight} alt="ERGAGORA" style={{ height: "auto", width: "auto", maxHeight: 24, maxWidth: "min(300px, 56vw)", display: "block" }} />
           <span className="shooting-star" aria-hidden="true" />
         </a>
 
@@ -1423,7 +1423,7 @@ export default function App() {
       {/* ===== FOOTER ===== */}
       <footer style={{ background: "#0c0e13", color: "#cfc9bf", padding: "50px 40px 36px" }}>
         <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 24, alignItems: "center" }}>
-          <img src={logoLight} alt="ERGAGORA" style={{ height: 24, width: "auto", filter: "brightness(0) invert(1)", opacity: 0.92 }} />
+          <img src={logoLight} alt="ERGAGORA" style={{ height: "auto", width: "auto", maxHeight: 22, maxWidth: "min(280px, 62vw)", opacity: 0.92 }} />
           <span style={{ fontSize: 14 }}>© {new Date().getFullYear()} {BRAND}</span>
         </div>
       </footer>
