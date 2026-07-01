@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import logo from "/ergagora-logo.png";
 import logoLight from "/ergagora-logo-transparent.png";
+import logoA from "/ergagora-a.png";
 
 // ============================================================
 //  ERGAGORA — Agencia de Agentes de IA
@@ -537,6 +538,24 @@ export default function App() {
           100% { opacity: 0; transform: translate(168px, -26px) rotate(-28deg); }
         }
         .logo-wrap { position: relative; display: flex; align-items: center; gap: 10px; }
+        .logo-stack { position: relative; display: inline-block; line-height: 0; }
+        .logo-a-fx {
+          position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+          pointer-events: none; will-change: filter, opacity;
+          animation: aElectric 2.4s ease-in-out infinite;
+        }
+        @keyframes aElectric {
+          0%,100% { filter: url(#aTurb) drop-shadow(0 0 2px #ff9a4d) drop-shadow(0 0 6px #e0672e) brightness(1); }
+          7%      { filter: url(#aTurb) drop-shadow(0 0 5px #ffb673) drop-shadow(0 0 13px #ff6a1e) brightness(1.4); }
+          9%      { filter: url(#aTurb) drop-shadow(0 0 1px #ff8a3d) drop-shadow(0 0 4px #e0672e) brightness(.82); }
+          16%     { filter: url(#aTurb) drop-shadow(0 0 6px #ffc585) drop-shadow(0 0 17px #ff6a1e) brightness(1.55); }
+          19%     { filter: url(#aTurb) drop-shadow(0 0 2px #ff9a4d) drop-shadow(0 0 7px #e0672e) brightness(1); }
+          48%     { filter: url(#aTurb) drop-shadow(0 0 4px #ffb673) drop-shadow(0 0 11px #ff6a1e) brightness(1.22); }
+          51%     { filter: url(#aTurb) drop-shadow(0 0 1px #ff8a3d) drop-shadow(0 0 3px #e0672e) brightness(.8); }
+          68%     { filter: url(#aTurb) drop-shadow(0 0 5px #ffc585) drop-shadow(0 0 15px #ff6a1e) brightness(1.45); }
+          72%     { filter: url(#aTurb) drop-shadow(0 0 2px #ff9a4d) drop-shadow(0 0 8px #e0672e) brightness(1.05); }
+        }
+        @media (prefers-reduced-motion: reduce) { .logo-a-fx { animation: none; filter: drop-shadow(0 0 5px #e0672e); } }
         .hero-flow-mobile { display: none; }
         .logo-gray { opacity: .55; transition: opacity .25s ease, transform .25s ease; }
         .logo-gray:hover { opacity: 1; transform: scale(1.08); }
@@ -579,6 +598,19 @@ export default function App() {
           .hero-h1 { font-size: 33px !important; }
         }
       `}</style>
+
+      {/* Filtro SVG: jitter de electricidad para la "A" del logo */}
+      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+        <defs>
+          <filter id="aTurb" x="-40%" y="-40%" width="180%" height="180%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.015 0.05" numOctaves="2" seed="7" result="noise">
+              <animate attributeName="baseFrequency" dur="0.9s" values="0.015 0.05; 0.028 0.09; 0.015 0.05" repeatCount="indefinite" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
+
       <span id="top" />
 
       {/* ===== NAV ===== */}
@@ -593,7 +625,10 @@ export default function App() {
         }}
       >
         <a href="#top" className="logo-wrap" onClick={(e) => { e.preventDefault(); goTo("#top"); }}>
-          <img src={logoLight} alt="ERGAGORA" style={{ height: "auto", width: "auto", maxHeight: 24, maxWidth: "min(300px, 56vw)", display: "block" }} />
+          <span className="logo-stack" style={{ maxHeight: 24, maxWidth: "min(300px, 56vw)" }}>
+            <img src={logoLight} alt="ERGAGORA" style={{ height: "auto", width: "auto", maxHeight: 24, maxWidth: "min(300px, 56vw)", display: "block" }} />
+            <img src={logoA} alt="" aria-hidden="true" className="logo-a-fx" />
+          </span>
           <span className="shooting-star" aria-hidden="true" />
         </a>
 
@@ -1423,7 +1458,10 @@ export default function App() {
       {/* ===== FOOTER ===== */}
       <footer style={{ background: "#0c0e13", color: "#cfc9bf", padding: "50px 40px 36px" }}>
         <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 24, alignItems: "center" }}>
-          <img src={logoLight} alt="ERGAGORA" style={{ height: "auto", width: "auto", maxHeight: 22, maxWidth: "min(280px, 62vw)", opacity: 0.92 }} />
+          <span className="logo-stack" style={{ maxHeight: 22, maxWidth: "min(280px, 62vw)", opacity: 0.92 }}>
+            <img src={logoLight} alt="ERGAGORA" style={{ height: "auto", width: "auto", maxHeight: 22, maxWidth: "min(280px, 62vw)", display: "block" }} />
+            <img src={logoA} alt="" aria-hidden="true" className="logo-a-fx" />
+          </span>
           <span style={{ fontSize: 14 }}>© {new Date().getFullYear()} {BRAND}</span>
         </div>
       </footer>
